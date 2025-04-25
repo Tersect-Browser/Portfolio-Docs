@@ -203,16 +203,48 @@ Finally, callHighlightBins() is called, which itself calls highlightBins() from 
 \subsection{Barcode Generation Extension}
 \subsubsection{Rationale}
 \subsubsection{User Interface}
+\paragraph{Feature Description}
+Given input parameters specified by the user, barcodes are generated via the backend and automatically downloaded for the user in txt format. The downloaded file is titled in the following format for easy identification and to prevent files being overwritten: \textit{SystemDateAndTime\_TB\_Barcode\_Gen\_AccessionName\.txt}.
+
+The file contains the following information: 
+\begin{itemize}
+    \item \textbf{Barcode sequence} - The base with the accession-specific SNP is enclosed in square brackets
+    \item \textbf{Barcode Start \& Barcode End} - The absolute position of the barcode in the chromosome 
+    \item \textbf{Variant Count} - The number of accession-specific SNPs that are present in the barcode 
+    \item \textbf{Variant Position} - The relative position of the accession-specific SNPs in the barcode 
+    \item \textbf{Repeat Sequence} - The sequence of the 2-bp repeating region. A repeating region is defined as 2 base pairs repeating 3+ times 
+    \item \textbf{Repeat Multiplier} - The number of times the repeat sequence is repeated 
+    \item \textbf{Repeat Start-End} - the relative start and end position of the repeat region within the barcode sequence 
+    \item \textbf{GC Content} - The GC content of the barcode 
+\end{itemize}
+
 \subsubsection{Technical Description}
+
+Barcode generation is controlled by two scripts: \verb+barcode_finder.sh+ and \verb+find_barcode.py+. 
+
+\paragraph{Calling Tersect CLI to extract variants}: 
+\verb+Barcode_finder.sh+ is run on the command line, and takes as input accession name, chromosome, interval start position, interval end position, barcode size, maximum variant number, reference fasta, and tersect TSI index. The chromosome and interval start and end positions are used to define the searchable \verb+REGION+, and the accession name is used to define \verb+SAFE_ACC+ which is used to save files to a temporary file.  
+
+The tersect CLI command \verb+tersect view+  is called to extract all variants within the specified region for the specified accession. The output is saved as a temporary TSV file as: \verb+${SAFE_ACC}_acc_unique.tsv+. The tersect CLI command tersect view is again used to extract all variants within the specified region for all accessions except the specified accession. This output is saved as a temporary TSV file as: \verb+${SAFE_ACC}_union_vars.tsv+.  
+
+Lastly, the \verb+find_barcode.py+ file is called, passing as arguments the accession name, reference fasta, chromosome, interval start position, interval end position, barcode size, maximum variant number, and the tersect output files  \verb+${SAFE_ACC}_acc_unique.tsv+ and  \verb+${SAFE_ACC}_union_vars.tsv+. 
+
+\paragraph{Generating barcodes}: 
+\verb+Find_barcode.py+ requires the following dependencies: argparse, SeqIO, and datetime.  
+
+The reference fasta is parsed using \verb+SeqIO.parse+, yielding sequence records that are converted to a dictionary using \verb+SeqIO.dict+. Using the user-inputted chromosome name, \verb+[args.chrom].seq+ extracts the chromosome sequence from the dictionary and saves it to the variable ref. The user-defined interval start and end positions are used to extract the \verb+ref_window+ from ref. 
+
+The \verb+load_variant_file()+ method imports the tersect output files and creates a dictionary, with variant position being stored as the key and a tuple containing the original base and the alternate base being stored as the dictionary value. Then, the \verb+remove_overlapping_variants()+ method compares the dictionaries and creates a new dictionary \verb+new_unique_vars+ with the same format, containing variants that are only present in the specified accession and not also present in any other accession. The method \verb+apply_variants_to_sequence()+ then uses the \verb+ref_window+ and \verb+new_unique_vars+ to generate an accession-specific sequence, \verb+unique_seq+, containing accession-specific SNPs. Lastly, the \verb+find_barcode_windows()+ method compares \verb+unique_seq+ against \verb+ref_window+ and using a sliding window of 1 base pair, identifies regions where the two sequences differ. The sequence, along with the absolute start and end position, is saved to the variable barcodes.  
+
+\paragraph{Output file and barcode stats}: 
+Statistical metrics are calculated for each barcode, using custom methods. The number of accession-specific variants is calculated using \verb+count_variant_number()+, which also records variant position within the barcode. The variant position is used to highlight the variants within the barcode using the custom \verb+highlight_ref_alt_positions()+ method, which encloses the variant in the following format: \verb+[original base/alternate base]+. Repeat content is calculated using \verb+find_dinucleotide_repeats_custom()+, with repeats being defined as regions where a dinucleotide (2-base pair) sequence repeats consecutively three or more times. The repeating dinucleotide, number of times the dinucleotide repeats, and the start and end positions of the repeat region within the barcode are returned. GC content is calculated as a percentage to six decimal places using \verb+calculate_gc_content()+. 
+
+The barcodes and respective metrics are written to a tsv file. The file name is formatted to include system date and time, \verb+'TB_Barcode_Gen'+, and the specified accession. 
+
 \subsubsection{Test Results}
 \subsubsection{Future Improvements}
-\subsection{Automated Introgression Search Extension}
-\subsubsection{Rationale}
-\subsubsection{User Interface}
-\subsubsection{Technical Description}
-\subsubsection{Test Results}
-\subsubsection{Future Improvements}
-\section{Conclusion}
+\subsection{Future Work and Extension Design}
+\subsubsection{Automated Introgression Search Extension}
 \section{References}
 
 \subsection{Purpose}
