@@ -1,25 +1,32 @@
-name: Build LaTeX document
+name: Build Multiple LaTeX Documents
 on: [push]
+
 jobs:
   build_latex:
     runs-on: ubuntu-latest
     steps:
       - name: Set up Git repository
         uses: actions/checkout@v4
-      - name: Compile LaTeX document
+
+      # Compile the first LaTeX document
+      - name: Compile TechDoc
         uses: xu-cheng/latex-action@v3
         with:
-          root_file: |
-            TechDoc.tex
-            UserMan.tex
-          working_directory: |
-            TechDoc/
-            UserManual/
-          work_in_root_file_dir: True
-      - name: Upload PDF file
+          root_file: TechDoc/TechDoc.tex
+          work_in_root_file_dir: false
+
+      # Compile the second LaTeX document
+      - name: Compile UserManual
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: UserManual/UserMan.tex
+          work_in_root_file_dir: false
+
+      # Upload all PDFs as artifacts
+      - name: Upload PDF files
         uses: actions/upload-artifact@v4
         with:
-          name: PDF
+          name: PDFs
           path: |
-            TechDoc.pdf
-            UserMan.pdf
+            TechDoc/TechDoc.pdf
+            UserManual/UserMan.pdf
