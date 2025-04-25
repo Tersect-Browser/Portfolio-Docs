@@ -9,7 +9,13 @@ jobs:
       - name: Compile LaTeX document
         uses: xu-cheng/latex-action@v3
         with:
-          root_file: TechDoc/TechDoc.tex
+          root_file: |
+            TechDoc.tex
+            UserMan.tex
+          working_directory: |
+            TechDoc
+            UserMan
+          work_in_root_file_dir: True
       - name: Upload PDF file
         uses: actions/upload-artifact@v4
         with:
