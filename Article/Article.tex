@@ -75,7 +75,7 @@
 
 %\subtitle{Subject Section}
 
-\title[Short Article Title]{TersectBrowser+ : A single browser for in-depth introgression analysis of resequenced genome datsaets}
+\title[Short Article Title]{TersectBrowser+ : A single browser for in-depth introgression analysis of re-sequenced genome datesets}
 
 \author[2]{Tanya Stead}
 \author[2]{David Oluwasusi}
@@ -106,6 +106,8 @@
 %\textbf{Supplementary information:} Supplementary data are available at \textit{Journal Name}
 %online.}
 
+% Variant comparison important, tools are slow, what Tersect does. Tersect produced because tools slow. We modify Tersect creating Tersect+ to bringing additional functionality to aid the investigation of cultivar introgressions for biologists.  
+
 \abstract{The field of cultivar genomics has evolved rapidly, with growing emphasis on mapping introgressions—segments of DNA from wild plant species that have been incorporated into cultivated lines. A variety of bioinformatic tools aim to interpret this expanding complexity of plant genomic data, predict introgressions, and identify commercially relevant regions for future breeding. Demand is increasing for tailored tools to interactively explore these complex genomic queries in real time. Created in 2022, the Web-based Tersect Browser can dynamically display introgression patterns by applying flexible set theoretical expressions to sets of sequence variant data. Our 2025 development of Tersect Browser offers multiple front-end extension capabilities so that the user can view and analyze data without leaving the page. We identify previously published introgressions with our tool, illustrating its potential for future research, and enriching plant breeders' understanding of crop cultivar genomics.}
 \keywords{introgression, browser, resequenced, SNP}
 
@@ -118,6 +120,10 @@
 
 \maketitle
 \section{Introduction}
+
+% # Intro / Current Situation & Problem & Tersect Solution
+% Large-scale resequencing projects enable comparative genomic studies to identify key variants and structures like haplotypes or introgressions. studies rely on set theoretical operations, but current tools (e.g., BEDOPS, BCFtools, BEDTools) are limited in query complexity and speed. Tersect, using its own query language and fast execution through bitmap indices, enabling complex, real-time genome queries. This will become: a part on slowness 'As shown in [ref = Tom Fady paper] tools slow'. Then add something on functionality of these tools EITHER 'slow tools have functionality' or 'tools do not have functionality'.  Then 'Tersect+ provides functionality. 
+
 
 \section{Expanding landscape of plant genomic studies}\label{sec2}
 
@@ -138,45 +144,47 @@ Beyond tomato, research in soybean introgression offers valuable cross-crop insi
 Together, these advances paint a dynamic picture of tomato genomics: one where introgression is not only a window into domestication and evolutionary history but also a powerful mechanism for ongoing improvement, including against threats such as climate change. The fusion of high-resolution genomic data, computational methods, and specialized tools enables researchers to explore tomato’s genetic landscape with increasing clarity and sophistication.  
 (Introgression hybridisation is an important factor in crop improvement. Biologists need to determine introgressions and identify donor species through visualising genetic distance and phylogenetic relationships based on the whole genome variant data. However, existing software is not suitable for full exploitation of the large publicly available data sets. Tersect Browser is a Web Application that is optimised for generating such visualisations.)
 
-\section{This is an example for first level head}\label{sec3}
+\section{Tersect Browser+}
 
-\subsection{This is an example for second level head - subsection head}\label{subsec2}
+% # Built based on Tersect Browswer... About Tersect About Tersect+- unified database, indexes and tracks and how speed is achieved. 
+% Builds a unified allele database from VCF files, using bitmap indexing to track presence/absence of variants. The system links variant positions to bitmap indices, allowing efficient region-specific searches and genome comparisons via compressed, sparse data structures. Indexing is fast and optimized for read-heavy workflows. While updating is less efficient, batch additions mitigate this. A custom parser converts set-based queries into abstract syntax trees (ASTs), which are then optimized and reused across queries for speed.  We summarize here the functionality. Probably in the following structure. Browser; Models; Search; and Barcodes and Introgressions [if we get there.] We do this with a paragraph on each. We write similarly to the Fady and Tom email. We could do it in two parts:  Browser and Gene Model and Search and Barcodes including introgression search, we do that. The structure in paragraphs will be:
 
-\subsubsection{This is an example for third level head - subsubsection head}\label{subsubsec2}
+\section{Features}
 
-\paragraph{This is an example for fourth level head - paragraph head}
+% Browser  - all these will be kept short paragraphs.
+% Gene Models
+% Search 
+% Barcodes
+% [Introgression]
 
-\section{Conclusion}
+\section{Funding}
 
-Some Conclusions here.
+
+%\section{This is an example for first level head}\label{sec3}
+
+% \subsection{This is an example for second level head - subsection head}\label{subsec2}
+
+% \subsubsection{This is an example for third level head - subsubsection head}\label{subsubsec2}
+
+% \paragraph{This is an example for fourth level head - paragraph head}
+
+% \section{Conclusion}
+
+% Some Conclusions here.
 
 %%%%%%%%%%%%%%
-
-\begin{appendices}
-
-\section{Section title of first appendix}\label{sec11}
-
-\subsection{Subsection title of first appendix}\label{subsec4}
-
-\section{Example of another appendix section}\label{sec13}%
-
-\end{appendices}
 
 \section{Code availability}
 The technical documentation is available at XX. The source code for the project is freely accessible on GitHub at XX.
 
-\section{Competing interests}
+% \section{Competing interests}
 
-\section{Author contributions statement}
+% \section{Author contributions statement}
 
-\section{Acknowledgments}
+% \section{Acknowledgments}
 
-\begin{thebibliography}{10}
-\bibitem{bahdanau2014neural}
-Dzmitry Bahdanau, Kyunghyun Cho, and Yoshua Bengio.
-\newblock Neural machine translation by jointly learning to align and
-  translate.
-\newblock {\em arXiv preprint arXiv:1409.0473}, 2014.
-\end{thebibliography}
+\bibliographystyle{plain}
+\bibliography{Article/article_ref}
+
 
 \end{document}
