@@ -77,11 +77,12 @@
 
 \title[Short Article Title]{TersectBrowser+ : A single browser for in-depth introgression analysis of re-sequenced genome datesets}
 
+% With Tom first, as first author and Students in alphabetical order. 
+\author[1,$\ast$]{Tomasz Kurowski\ORCID{}}
+\author[2]{Gabrielle Baumberg}
+\author[2]{Gregory Lupton}
 \author[2]{Tanya Stead}
 \author[2]{David Oluwasusi}
-\author[2]{Gregory Lupton}
-\author[2]{Gabrielle Baumberg}
-\author[1,$\ast$]{Tomasz Kurowski\ORCID{}}
 
 \authormark{Author Name et al.}
 
@@ -124,32 +125,60 @@
 % # Intro / Current Situation & Problem & Tersect Solution
 % Large-scale resequencing projects enable comparative genomic studies to identify key variants and structures like haplotypes or introgressions. studies rely on set theoretical operations, but current tools (e.g., BEDOPS, BCFtools, BEDTools) are limited in query complexity and speed. Tersect, using its own query language and fast execution through bitmap indices, enabling complex, real-time genome queries. This will become: a part on slowness 'As shown in [ref = Tom Fady paper] tools slow'. Then add something on functionality of these tools EITHER 'slow tools have functionality' or 'tools do not have functionality'.  Then 'Tersect+ provides functionality. 
 
+Cultivar genomics has evolved rapidly, with growing emphasis on mapping introgressions, segments of DNA from wild plant species that have been incorporated into cultivated lines. A variety of bioinformatic tools aim to interpret this expanding complexity of plant genomic data, predict introgressions, and identify commercially relevant regions for future breeding (Qin et al., 2021)\cite{Qinetal2023}. Demand for tailored tools to explore these complex genomic queries in real-time is increasing. 
 
-\section{Expanding landscape of plant genomic studies}\label{sec2}
+As shown previously by Kurowski & Mohareb (2020)\cite{KurowskiMohareb2019}, Tersect is a lightweight, high-performing, real-time genome querying command-line utility that uses its own query language and bitmap indices to interpret and apply flexible set theoretical expressions to sets of sequence variant data for tomato genomes. In comparison to other tools such as BEDOPS, BCFtools and BDETools (Quinlan & Hall, 2010\cite{Qinlan2010}; Danecek et al., 2011)\cite{}, Tersect performs from three to over a hundred times faster than BCFTools (Kurowski & Mohareb, 2020)\cite{KurowskiMohareb2019}. 
 
-The field of tomato genomics has continued to evolve rapidly, with a growing emphasis on mapping introgressions — segments of DNA from wild tomato species that have been incorporated into cultivated lines. Foundational work such as that by Aflitos et al. \cite{RN7} , which sequenced 84 tomato accessions and wild relatives, exposed severe genetic bottlenecks in cultivated tomatoes and laid the groundwork for modern introgression analysis. 
+For biologists, command-line-based tools can be cumbersome. Web-app based tools with intuitive data visualization, real-time querying, and introgression mapping provide much better user experiences and better meet the requirements for interactive exploration of large-scale variant datasets and immediate visual feedback on genomic regions of interest.  
 
-Recent studies have expanded on this base with increasingly sophisticated tools and datasets. Notably, Liu et al. (2023) used tomato pan-genomes built from hundreds of accessions to uncover regions of structural variation and introgression hotspots, many of which affect key traits like fruit size, shape, disease resistance, and flavour. The construction of these pan-genomes enables researchers to observe variation absent in the reference genome, improving trait mapping and introgression detection. 
+In 2022, a web-based version of Tersect, Tersect Browser, was created (Kurowski, 2023\cite{KurowskiphdThesis}) using \boldsymbol{Include dataset}. Tersect Browser offered multiple front-end extension capabilities that allowed user to view and analyse data without leaving the page. These include: a dynamic introgression heatmap, tree navigation of accessions, and region-focused querying of genomic variants.
 
-\subsection{Background on introgression studies}\label{subsec1}
+The field of tomato genomics, however, is growing with increasing emphasis on mapping introgressions and higher volumes of genomic data. As the field has built on foundational work of Aflitos et al, (2014)\cite{Aflitos2014}, which sequenced 84 tomato accessions and wild relatives, exposed severe genetic bottlenecks in cultivated tomatoes and laid the groundwork for modern introgression analysis, there is increasing requirements for more powerful and more capable introgression visualization and comparative analysis tools. 
 
-The role of introgression in water-tolerance Kubond et al. (2022), shows how such analysis will be important in identifying variant resistance to climate change.  
+Recent studies have expanded on this base with increasingly sophisticated tools and datasets. Notably, Liu et al. (2023)\cite{liu_effects_2023} used tomato pan-genomes built from hundreds of accessions to uncover regions of structural variation and introgression hotspots, many of which affect key traits like fruit size, shape, disease resistance, and flavour. The construction of these pan-genomes enables researchers to observe variation absent in the reference genome, improving trait mapping and introgression detection.
 
-To manage and interpret the expanding complexity of genomic data, a wide range of bioinformatic tools have been deployed. Established platforms such as SnpEff, VEP, BEDTools, BEDOPS, CrossMap, and the UCSC Genome Browser continue to support annotation, variant effect prediction, and coordinate translation. Visualization utilities such as the Introgression Browser (Aflitos et al., 2015) and the Tersect Browser (Kurowski and Mohareb, 2019) offer tailored environments for exploring introgression patterns, with Tersect’s set-theoretic framework enabling high-speed, complex genomic queries. 
+Here, we present Tersect Browser+, an updated introgression analysis platform with expanded front-end features extension capabilities that users can view and analyze data without leaving the page.  It integrates JBrowse (Skinner et al., 2009\cite{skinner_jbrowse_2009}; Buels et al., 2016 \cite{buels_jbrowse_2016}) capabilities to capture gene models, exon-intron structures, and positional gene information for biologists inspecting tomato introgression data sets. 
 
-Meanwhile, long-read sequencing technologies (e.g., PacBio, Hi-C, and optical mapping) as applied in SL4.0 (Hosmani et al., 2019), and innovations in in situ hybridization (Shearer et al., 2014), have markedly improved the resolution of reference genomes—critical for detecting subtle and ancient introgressions. 
+JBrowse is a widely used, web-based genome browser designed for fast, interactive visualization of genomic data. Developed as a successor to earlier tools like GBrowse, JBrowse enables users to view and explore large-scale genome annotations, sequence data, and variation information through a modern, dynamic interface (Skinner et al, 2009 \cite{skinner_jbrowse_2009}). It supports a wide variety of standard file formats, including GFF, BAM, VCF, and FASTA, and is highly extensible through plugins, making it adaptable for a range of research applications from comparative genomics to functional annotation, including introgression web-app based analysis (Buels et al., 2016\cite{buels_jbrowse_2016}). Researchers often deploy JBrowse to visualize genome assemblies, transcriptomes, and variant information. Its active development and ease of integration into web servers have made it a common choice for bioinformatics platforms. 
 
-Beyond tomato, research in soybean introgression offers valuable cross-crop insights. Studies have shown how introgressed genomic regions from wild Glycine soja into Glycine max improve traits like drought resistance, seed oil composition, and disease resilience. Tools such as SoyFGB v2.0 \footnote{\url{https://sfgb.rmbreeding.cn/index}}, SoyBase\footnote{\url{https://www.soybase.org/}}, and SoyKB\footnote{\url{http://soykb.org/}} provide functional genomics platforms that may serve as models for tomato-specific resources. Graph genome approaches and machine learning models are emerging as promising directions for future introgression prediction and trait association.
+Tersect Browser+ also includes other features such as a search feature and barcode generating feature. It allows for the investigation of other crop datasets, for example Soybean [include specific species type/name]. We identify previously published introgressions with our tool, illustrating its potential for future research, and enriching plant breeders' understanding of crop cultivar genomics.
 
-Together, these advances paint a dynamic picture of tomato genomics: one where introgression is not only a window into domestication and evolutionary history but also a powerful mechanism for ongoing improvement, including against threats such as climate change. The fusion of high-resolution genomic data, computational methods, and specialized tools enables researchers to explore tomato’s genetic landscape with increasing clarity and sophistication.  
-(Introgression hybridisation is an important factor in crop improvement. Biologists need to determine introgressions and identify donor species through visualising genetic distance and phylogenetic relationships based on the whole genome variant data. However, existing software is not suitable for full exploitation of the large publicly available data sets. Tersect Browser is a Web Application that is optimised for generating such visualisations.)
 
-\section{Tersect Browser+}
+%\section{Expanding landscape of plant genomic studies}\label{sec2}
+
+% As previously shown by Kurowski & Mohareb (2020), Tersect, a lightweight, high-performing, real-time genome querying command-line utility that uses its own query language and fast execution through bitmap indices to interpret and apply flexible set theortical expressions to sets of sequence variant data, allows [something] identification of key variants and structures like haplotypes and introgressions in support of comparative genomic studies. Tersect returned  
+
+% The field of tomato genomics has continued to evolve rapidly, with a growing emphasis on mapping introgressions — segments of DNA from wild tomato species that have been incorporated into cultivated lines. Foundational work such as that by Aflitos et al. \cite{RN7} , which sequenced 84 tomato accessions and wild relatives, exposed severe genetic bottlenecks in cultivated tomatoes and laid the groundwork for modern introgression analysis. 
+
+% Recent studies have expanded on this base with increasingly sophisticated tools and datasets. Notably, Liu et al. (2023) used tomato pan-genomes built from hundreds of accessions to uncover regions of structural variation and introgression hotspots, many of which affect key traits like fruit size, shape, disease resistance, and flavour. The construction of these pan-genomes enables researchers to observe variation absent in the reference genome, improving trait mapping and introgression detection. 
+
+% \subsection{Background on introgression studies}\label{subsec1}
+
+% The role of introgression in water-tolerance Kubond et al. (2022), shows how such analysis will be important in identifying variant resistance to climate change.  
+
+% To manage and interpret the expanding complexity of genomic data, a wide range of bioinformatic tools have been deployed. Established platforms such as SnpEff, VEP, BEDTools, BEDOPS, CrossMap, and the UCSC Genome Browser continue to support annotation, variant effect prediction, and coordinate translation. Visualization utilities such as the Introgression Browser (Aflitos et al., 2015) and the Tersect Browser (Kurowski and Mohareb, 2019) offer tailored environments for exploring introgression patterns, with Tersect’s set-theoretic framework enabling high-speed, complex genomic queries. 
+
+% Meanwhile, long-read sequencing technologies (e.g., PacBio, Hi-C, and optical mapping) as applied in SL4.0 (Hosmani et al., 2019), and innovations in in situ hybridization (Shearer et al., 2014), have markedly improved the resolution of reference genomes—critical for detecting subtle and ancient introgressions. 
+
+% Beyond tomato, research in soybean introgression offers valuable cross-crop insights. Studies have shown how introgressed genomic regions from wild Glycine soja into Glycine max improve traits like drought resistance, seed oil composition, and disease resilience. Tools such as SoyFGB v2.0 \footnote{\url{https://sfgb.rmbreeding.cn/index}}, SoyBase\footnote{\url{https://www.soybase.org/}}, and SoyKB\footnote{\url{http://soykb.org/}} provide functional genomics platforms that may serve as models for tomato-specific resources. Graph genome approaches and machine learning models are emerging as promising directions for future introgression prediction and trait association.
+
+% Together, these advances paint a dynamic picture of tomato genomics: one where introgression is not only a window into domestication and evolutionary history but also a powerful mechanism for ongoing improvement, including against threats such as climate change. The fusion of high-resolution genomic data, computational methods, and specialized tools enables researchers to explore tomato’s genetic landscape with increasing clarity and sophistication.  
+% (Introgression hybridisation is an important factor in crop improvement. Biologists need to determine introgressions and identify donor species through visualising genetic distance and phylogenetic relationships based on the whole genome variant data. However, existing software is not suitable for full exploitation of the large publicly available data sets. Tersect Browser is a Web Application that is optimised for generating such visualisations.)
+
+\section{Features}
+
+Tersect Browser+ is a web application based on Tersect Browser
+
+\subsubsection{Gene Browser}
+
+We will include text here on the feature. I will look through the Technical Documentation to put this together. 
+
+\subsubsection{Gene Model}
+\subsubsection{Search Features}
+\subsubsection{Barcode Generator}
 
 % # Built based on Tersect Browswer... About Tersect About Tersect+- unified database, indexes and tracks and how speed is achieved. 
 % Builds a unified allele database from VCF files, using bitmap indexing to track presence/absence of variants. The system links variant positions to bitmap indices, allowing efficient region-specific searches and genome comparisons via compressed, sparse data structures. Indexing is fast and optimized for read-heavy workflows. While updating is less efficient, batch additions mitigate this. A custom parser converts set-based queries into abstract syntax trees (ASTs), which are then optimized and reused across queries for speed.  We summarize here the functionality. Probably in the following structure. Browser; Models; Search; and Barcodes and Introgressions [if we get there.] We do this with a paragraph on each. We write similarly to the Fady and Tom email. We could do it in two parts:  Browser and Gene Model and Search and Barcodes including introgression search, we do that. The structure in paragraphs will be:
-
-\section{Features}
 
 % Browser  - all these will be kept short paragraphs.
 % Gene Models
@@ -159,6 +188,7 @@ Together, these advances paint a dynamic picture of tomato genomics: one where i
 
 \section{Funding}
 
+A question for Tom - we see this included in many papers published in this journal. What should we include?
 
 %\section{This is an example for first level head}\label{sec3}
 
@@ -175,7 +205,8 @@ Together, these advances paint a dynamic picture of tomato genomics: one where i
 %%%%%%%%%%%%%%
 
 \section{Code availability}
-The technical documentation is available at XX. The source code for the project is freely accessible on GitHub at XX.
+
+We will add in a link to the github reference in here and a link to the technical documentation. 
 
 % \section{Competing interests}
 
@@ -184,7 +215,7 @@ The technical documentation is available at XX. The source code for the project 
 % \section{Acknowledgments}
 
 \bibliographystyle{plain}
-\bibliography{Article/article_ref}
+\bibliography{Article/article_references}
 
 
 \end{document}
