@@ -166,16 +166,31 @@ Tersect Browser+ also includes other features such as a search feature and barco
 % (Introgression hybridisation is an important factor in crop improvement. Biologists need to determine introgressions and identify donor species through visualising genetic distance and phylogenetic relationships based on the whole genome variant data. However, existing software is not suitable for full exploitation of the large publicly available data sets. Tersect Browser is a Web Application that is optimised for generating such visualisations.)
 
 \section{Features}
+Tersect Browser+ is a web application that depends on resequenced data in VCF format and uses a reference genome in FASTA format. Utilizing a MEAN stack (MongoDB, Express, Angular, and Node) architecture, it creates a webpage displaying heatmaps and phylogenetic trees for introgressions within the loaded crop dataset. This provides an interface for users to identify differences across accessions within the same species dataset. It also includes a JBrowse interface for investigating specific variants, displaying selected genes directly alongside the generated heatmap. A search feature highlights high-impact variants on the webpage, helping to distinguish the selected reference genomes. Tersect Browser+ also offers barcode generation functionality for various cultivars and specific species in the dataset.
 
-Tersect Browser+ is a web application based on Tersect Browser
+\begin{figure} [http]
+  \centering
+  \includegraphics[width=\textwidth]{path/to_image.png}
+  \caption{Tersect Browser+ overview. The browser provides a single way to analyse variant data without leaving the page.[More description]}
+  \label{fig:your_label}
+\end{figure}
 
-\subsubsection{Gene Browser}
+\subsubsection{Gene Brwoser}
 
 We will include text here on the feature. I will look through the Technical Documentation to put this together. 
 
 \subsubsection{Gene Model}
+
+We will include text here on the feature. I will look through the Technical Documentation to put this together. 
+
 \subsubsection{Search Features}
+
+We will include text here on the feature. I will look through the Technical Documentation to put this together. 
+
 \subsubsection{Barcode Generator}
+
+We will include text here on the feature. I will look through the Technical Documentation to put this together. 
+
 
 % # Built based on Tersect Browswer... About Tersect About Tersect+- unified database, indexes and tracks and how speed is achieved. 
 % Builds a unified allele database from VCF files, using bitmap indexing to track presence/absence of variants. The system links variant positions to bitmap indices, allowing efficient region-specific searches and genome comparisons via compressed, sparse data structures. Indexing is fast and optimized for read-heavy workflows. While updating is less efficient, batch additions mitigate this. A custom parser converts set-based queries into abstract syntax trees (ASTs), which are then optimized and reused across queries for speed.  We summarize here the functionality. Probably in the following structure. Browser; Models; Search; and Barcodes and Introgressions [if we get there.] We do this with a paragraph on each. We write similarly to the Fady and Tom email. We could do it in two parts:  Browser and Gene Model and Search and Barcodes including introgression search, we do that. The structure in paragraphs will be:
