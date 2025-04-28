@@ -70,23 +70,23 @@ The Admin is defined as an individual with bioinformatics and software design kn
 
 \subsection{Download of required material}
 \begin{enumerate}
-    \item Collect background context from the user.
+  \item Collect background context and required data from the user.
 \begin{itemize}
-    \item Size and chromosome number of the reference genome.
-    \item Size and diversity of the resequenced dataset. Any metadata associated with different accessions in the dataset, such as wild variety vs domesticated variety.
-    \item Whether there are prior identified introgressions known to be functionally relevant for the species. These can be used to 'check' the ability of TersectBrowser+ to identify introgressed regions for the specified dataset.
+  \item Reference genome in fasta format (may be compressed). Size and chromosome number will impact the speed of dataset upload and deployment - TersectBrowser+ has been tested with a genome size of ~1GB, and 20 chromosome pairs.
+  \item Resequenced genome dataset in VCF format (may be compressed, as a multi-sample VCF or as a directory of individual files). TersectBrowser+ has been tested with a dataset size of ~500 VCF files representing individual accessions. 
+  \item Any metadata associated with different accessions in the dataset, such as wild variety vs domesticated variety. \hl{This should be provided in a text file.}
+  \item A GFF file of gene model information for the reference genome, produced using SNPeff software. If not using SNPeff, ensure that variant impact levels are categorised into 'High', 'Medium', and 'Low' impact. If not provided, the gene model track in the Variant Browser will be unavailable. 
+  \item Whether there are prior identified introgressions known to be functionally relevant for the species. These can be used to 'check' the ability of TersectBrowser+ to identify introgressed regions for the specified dataset.
 \end{itemize}
-    \item Clone the GitHub repository of TersectBrowser+ to the local machine. Follow the README from \hyperlink {https://github.com/Tersect-Browser/Tersect-browser.git}{Tersect GitHub} for issues with install.
-    \item Download relevant files to to the specified location within the repository: \textit{Tersect-browser/\(\sim \)/mongo-data/gp\_data\_copy/}
-    \begin{itemize}
-        \item Download all VCF files in the resequenced dataset. Run tabix on these files to create .tbi index files.
-        \item Download the reference genome FASTA file. Run SAMtools faidx to create .fai index file.
-        \item Download (or generate) an annotation GFF file for the resequenced dataset using SNPeff. If not using SNPeff, ensure that variant impact levels are categorised into 'High', 'Medium', and 'Low' impact. Index the GFF file. Run tabix on this file to create a .tbi index file.
-    \end{itemize}
-    \item Use JBrowse CLI text-index tool to generate Trix text searching files (.ix, .ixx, and .meta.json) from the GFF annotation file.
-    \item Run the script \verb+add_config_tracks.py+ using these downloaded files. This will use a set of jbrowse arguments to load the datafiles as tracks in the Variant Browser component.
-    \item Run the script \verb+change_dataset_files.py+ using these downloaded files as CLI arguments, in order to update the references to these data files in the project.
-    \item Run the script \verb+add_example_dataset.sh+ to prepare the dataset.
+  \item Clone the GitHub repository of TersectBrowser+ to the local machine. Follow the README from \hyperlink {https://github.com/Tersect-Browser/Tersect-browser.git}{TersectBrowser+ GitHub} for installation instructions.
+  \item Download relevant files from section (1) to a new folder within the root directory of the local Tersect-browser repository.
+  \item Set environment variables \verb+fasta+, \verb+gff+, and \verb+vcfs+ according to their new location relative to the root of Tersect-browser.
+  \item Run the script \verb+setup_new_tbrowser_dataset.py+ using the environment variables of files as input:
+  
+      \verb+python setup_new_tbrowser_dataset.py -f ${fasta} -g ${gff} -V ${vcfs}+
+      \begin{itemize}
+          \item After running the script, there should be visible a new \verb+config.json+ file in the root folder, as well as a new folder \verb+./~/mongo-data/gp_data_copy+ containing fasta files, gff files, and VCF files along with their index files. The main Tersect index file should be in the folder above. This is where the server will look to find information on tracks when generating the Variant Browser panel.
+      \end{itemize}
 \end{enumerate}
 
 \section{Config file generation}

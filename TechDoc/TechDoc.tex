@@ -4,6 +4,7 @@
 \usepackage{hyperref}
 \usepackage{xcolor}
 \usepackage{soul}
+\usepackage{listings}
 \usepackage[a4paper,width=150mm,top=25mm,bottom=25mm]{geometry}
 
 \title{
@@ -16,7 +17,7 @@
 
 
 
-\author{Extra author, David Oluwasusi, Tanya Stead, Gregory Lupton, Gabrielle Baumberg \\ Supervised by: Dr. Tomasz Kurowski}
+\author{David Oluwasusi, Tanya Stead, Gregory Lupton, Gabrielle Baumberg \\ Supervised by: Dr. Tomasz Kurowski}
 
 \begin{document}
 \sloppy % allows line spacing stretch to justify the text
@@ -49,10 +50,52 @@ The main requirements for TersectBrowser+ deployment are:
     \item RapidNJ / Rosetta
 \end{itemize}
 
+\subsection{Dataset Upload}
+
+The Admin is defined as an individual with bioinformatics and software design knowledge, background comprehension for all sections of this Technical Documentation, and acting to facilitate the use of a deployed TersectBrowser+ by the plant breeder main user of the software. When a new dataset is requested for deployment on TersectBrowser+, the Admin will need to follow the below steps:
+\begin{enumerate}
+    \item Collect background context and required data from the user.
+\begin{itemize}
+    \item Reference genome in fasta format (may be compressed). Size and chromosome number will impact the speed of dataset upload and deployment - TersectBrowser+ has been tested with a genome size of ~1GB, and 20 chromosome pairs.
+    \item Resequenced genome dataset in VCF format (may be compressed, as a multi-sample VCF or as a directory of individual files). TersectBrowser+ has been tested with a dataset size of ~500 VCF files representing individual accessions. 
+    \item Any metadata associated with different accessions in the dataset, such as wild variety vs domesticated variety. \hl{This should be provided in a text file.}
+    \item A GFF file of gene model information for the reference genome, produced using SNPeff software. If not using SNPeff, ensure that variant impact levels are categorised into 'High', 'Medium', and 'Low' impact. If not provided, the gene model track in the Variant Browser will be unavailable. 
+    \item Whether there are prior identified introgressions known to be functionally relevant for the species. These can be used to 'check' the ability of TersectBrowser+ to identify introgressed regions for the specified dataset.
+\end{itemize}
+    \item Clone the GitHub repository of TersectBrowser+ to the local machine. Follow the README from \hyperlink {https://github.com/Tersect-Browser/Tersect-browser.git}{TersectBrowser+ GitHub} for installation instructions.
+    \item Download relevant files from section (1) to a new folder within the root directory of the local Tersect-browser repository.
+    \item Set environment variables \verb+fasta+, \verb+gff+, and \verb+vcfs+ according to their new location relative to the root of Tersect-browser.
+    \item Run the script \verb+setup_new_tbrowser_dataset.py+ using the environment variables of files as input:
+    
+        \verb+python setup_new_tbrowser_dataset.py -f ${fasta} -g ${gff} -V ${vcfs}+
+        \begin{itemize}
+            \item After running the script, there should be visible a new \verb+config.json+ file in the root folder, as well as a new folder \verb+./~/mongo-data/gp_data_copy+ containing fasta files, gff files, and VCF files along with their index files. The main Tersect index file should be in the folder above. This is where the server will look to find information on tracks when generating the Variant Browser panel.
+        \end{itemize}
+\end{enumerate}
+
+
+
+
+specified location within the repository: \textit{Tersect-browser/\(\sim \)/mongo-data/gp\_data\_copy/}
+\begin{itemize}
+    \item Download all VCF files in the resequenced dataset. Run tabix on these files to create .tbi index files.
+    \item Download the reference genome FASTA file. Run SAMtools faidx to create .fai index file.
+    \item Download (or generate) an annotation GFF file for the resequenced dataset using SNPeff.  Index the GFF file. Run tabix on this file to create a .tbi index file.
+\end{itemize}
+\begin{itemize}
+\item Use JBrowse CLI text-index tool to generate Trix text searching files (.ix, .ixx, and .meta.json) from the GFF annotation file.
+\item Run the script \verb+add_config_tracks.py+ using these downloaded files. This will use a set of jbrowse arguments to load the datafiles as tracks in the Variant Browser component.
+\item Run the script \verb+change_dataset_files.py+ using these downloaded files as CLI arguments, in order to update the references to these data files in the project.
+\item Run the script \verb+add_example_dataset.sh+ to prepare the dataset.
+\end{itemize}
+
 \section{TersectBrowser+}
 \subsection{Variant Browser Extension}
 \label{sec:Browser}
 \subsubsection{Rationale}
+The main benefit of TersectBrowser relative to similar genome comparison software for displaying key differences within resequenced datasets is its use of Tersect CLI, to index and then quickly query these genomes for investigation at user-defined scale. However, in order for TersectBrowser+ to be competitive as a tool with other browsers, it was necessary to implement features that enhance further investigation within the scope of the same browser. The main view of the original TersectBrowser displayed the density of variants along each chromosome of the reference genome, a view compatible with the addition of a variant browser with multiple tracks providing extra information at a per-base level. 
+
+After a review of node-compatible browser tools such as CRAMER, JBrowse was ultimately chosen to carry out this extension request. The initial build of JBrowse into TersectBrowser+ as an extension focused on retaining features most relevant to the user aims, and bringing the styling of the panel in line with the rest of the page. This extension also involved generating a popup window of the same JBrowse component to be initialised when the user was interested in a specific accession or bin region. 
 
 \subsubsection{User Interface}
 
@@ -67,7 +110,7 @@ The main requirements for TersectBrowser+ deployment are:
     \begin{itemize}
         \item Reference sequence 
         \item Variant tracks for each loaded accession
-        \item Gene models FeatureTrack (Ext-GM) 
+        \item Gene models FeatureTrack (\nameref{sec:Models})
     \end{itemize}
     \item Variant browser window is preloaded with default tracks. 
     \begin{itemize}
@@ -142,21 +185,21 @@ Inside \verb +tersect-browser.component.ts+, the variable \verb +offsetCanvas+ i
 \subsubsection{Test Results}
 When additional variant tracks are added to the Browser view, the size of the browser panel does not change. The user is able to scroll downwards to view more tracks in the browser. 
 
+When a new dataset is added, the custom addition script automatically updates the names of tracks and assembly in the relevant files within the genome-browser extension. This flexibility allows the Variant Browser extension to be accessible by plant breeders working on many different datasets. TersectBrowser was initially validated with a human genome dataset, so it was important to maintain this flexibility of input in the new extensions.
+
 \subsubsection{Future Improvements}
-(Current) Limitations: 
-
-Only SL2.50 loaded as assembly and reference 
-
-Can only view variant tracks for 150\_VCF\_Tomato dataset - this is hard coded, and would need to be changed if we want this to be dynamic (when the user adds their own dataset) / if we as admins want to load soybean dataset!
 
 \subsection{Gene Models Extension}
 \label{sec:Models}
 \subsubsection{Rationale}
+Once the Variant Browser panel was added to the main page of TersectBrowser+, this facilitated the inclusion of a specified gene model track. This allows the plant breeder user to identify an area of high variant density on the heatmap, and then check the gene model track to investigate whether this region occurs near a genetic feature with functional relevance to the species.
+
 \subsubsection{User Interface}
 \paragraph{Feature Description}
 \begin{itemize}
     \item In the Jbrowse window, the first track shows gene models based on the GFF file provided.  
-    \item Gene model annotations are based on the official \hl{tomato genome annotation v2.4}: \href{https://phytozome-next.jgi.doe.gov/info/Slycopersicum_ITAG2_4#:~:text=Genome%20Overview,genome%2Cwith%2034%2C725%20gene%20models}{Slycopersicum ITAG annotation v2.4}
+%    \item Gene model annotations are based on the official \hl{tomato genome annotation v2.4}: \href{https://phytozome-next.jgi.doe.gov/info/Slycopersicum_ITAG2_4#:~:text=Genome%20Overview,genome%2Cwith%2034%2C725%20gene%20models}{Slycopersicum ITAG annotation v2.4}
+% The above is tomato-specific. Not sure where it fits
     \item The popup view of the same Jbrowse component has similar default: the first track is the gene models track, and the second track is the variant track for the selected accession.
 \end{itemize}
 
@@ -168,11 +211,14 @@ The Jbrowse \verb+viewState+ is configured in \verb+JbrowseWrapper.tsx+, as desc
 For the popup window, the JBrowse \verb+viewState+ is configured when an accession is selected in \verb+JbrowseWithAccession.tsx+, as described in \nameref{sec:Browser}. If a track with a \verb+trackId+ matching the selected accession is found, the viewer displays both the first track defined in \verb+tracks.ts+ and the matching track. 
 
 \subsubsection{Test Results}
+This extension has been tested with the additional Soybean dataset, with correct functionality. The relevance of the gene models in the GFF file depend on what the user provides in the dataset, and how the GFF file was created. 
+
 \subsubsection{Future Improvements}
 
 \subsection{Feature Search Extension}
 \subsubsection{Rationale}
-The aim of this extension is to allow the user to search specific genes and identify which accession contains a high/medium/low impact variant impacting that gene.
+The aim of this extension is to allow the user to search specific genes and identify which accession contains a \hl{high/medium/low} impact variant affecting that gene. The bins containing high impact variants for that gene will be highlighted at the accession level, allowing high resolution investigation of variants. The user may alternatively search for any high impact variants within a specified region, in case they lack a specific gene name to search. The highlighted bins may then be selected and opened in the popup \nameref{sec:Browser} window for further investigation.
+
 \subsubsection{User Interface}
 \paragraph{Feature Description}
 \begin{itemize}
@@ -214,8 +260,12 @@ Finally, callHighlightBins() is called, which itself calls highlightBins() from 
 
 \subsubsection{Test Results}
 \subsubsection{Future Improvements}
+
+
 \subsection{Barcode Generation Extension}
 \subsubsection{Rationale}
+A key aim for plant breeders when comparing their own plant strains with other cultivars in resequenced datasets is to be able to identify their strain at the genome level. This would allow for protection of intellectual property in the case of an advantageous new introgression that can be uniquely identified. The Barcoding extension allows this unique identification by generating a range of barcodes with a user-specified maximum number of SNPs, so that primers for this barcode are easily generated in a wetlab environment. Metrics comparing these putative barcodes are also provided to the user, and available for local download. 
+
 \subsubsection{User Interface}
 \paragraph{Feature Description}
 Given input parameters specified by the user, barcodes are generated via the backend and automatically downloaded for the user in txt format. The downloaded file is titled in the following format for easy identification and to prevent files being overwritten: \textit{SystemDateAndTime\_TB\_Barcode\_Gen\_AccessionName\.txt}.
@@ -296,33 +346,14 @@ Design Entity                       & \begin{tabular}[c]{@{}l@{}}An element of a
 \end{tabular}
 \end{table}
 
-\section{System Overview}
-Give a general description of the functionality, context and design of your project. Provide any 
-background information if necessary.
-
 \section{System Architecture}
 \subsection{Architectural Design}
 
-
-\subsection{Decomposition Description}
-
 \subsection{Design Rationale}
 
-
-\section{Data Design}
 \subsection{Data Description}
 
 \subsection {Data Dictionary}
-
-\section{Component Design}
-
-\section{Humnan Interface Design}
-
-\subsection {Overview of User Interface}
-
-\subsection {Screen Images}
-
-\subsection {Screen Objects and Actions}
 
 \section{APPENDICES}
 
