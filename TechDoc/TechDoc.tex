@@ -25,16 +25,30 @@
 
 \section{Overview}
 This Technical Documentation describes the particular details of updating the original TersectBrowser developed by Tomasz Kurowski into the TersectBrowser+ by integrating multiple extension features.
+
 \section{Architecture}
 The TersectBrowser+ software is an Angular project, with an original frontend and backend written in Angular 8, and a separate extension space written in Angular 19 using Node 22. It was chosen to use a 'bolt-on' approach for the extensions in order to fit the project delivery within the time requirements, as well as allowing the new extensions to use up-to-date packages. The app is dockerized to allow both versions of node to be used seamlessly in different sections.
 
+For the TersectBrowser+ update to the original TersectBrowser, main changes have been made to the frontend implementation of features added in a separate extension section of the project. The main addition is in a 'genome-browser' extension, which contains elements for each of the specific features mentioned in the project brief. 
+
 \section{Deployment}
+The GitHub project \url{https://github.com/Tersect-Browser/Tersect-browser} README provides detailed instructions for setup, dependencies, and deployment, however the main outline is given here.
 
 \subsection{System Requirements}
 TersectBrowser+ can be setup and deployed from both Mac and Windows machines, with variations in the configuration required. 
 
+The main requirements for TersectBrowser+ deployment are:
+\begin{itemize}
+    \item nvm (versions 16 and 22 specifically, as these will be deployed separately)
+    \item npm registery \url{https://registry.npmjs.org/}
+    \item Angular CLI v1.7.1
+    \item Tersect CLI
+    \item JBrowse CLI
+    \item MongoDB
+    \item Python virtual environment
+    \item RapidNJ / Rosetta
+\end{itemize}
 
-\section{TersectBrowser}
 \section{TersectBrowser+}
 \subsection{Variant Browser Extension}
 \label{sec:Browser}
