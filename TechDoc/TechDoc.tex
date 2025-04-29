@@ -76,10 +76,20 @@ The Admin is defined as an individual with bioinformatics and software design kn
 
 \subsection{Deployment with loaded dataset}
 \begin{enumerate}
-    \item Run the Mongo Database using:
+    \item Run the Mongo Database using: \\
+        \verb+mongod --dbpath <pathto/mongo-data>+
+    \item Change to the root of the Tersect-browser repo and run:\\
+        \verb+nvm use 16+\\
+        \verb+npm start+
+    \item Change to the ersect-browser/extension/genome-browser/ directory and run:\\
+        \verb+nvm use 22+\\
+        \verb+npm start+
+    \item Open TersectBrowser+ on \url{http://localhost:4200/TersectBrowserGP/}
 \end{enumerate}
 
 \section{TersectBrowser+}
+The project brief to extend the original TersectBrowser listed four main extension requirements, as well as a stretch extension. These requirements were provided as discrete goals for the project, and informed the main working priorities for the project timeline, however in practice the four extensions do have significant overlap in terms of code structure. For this reason, the accompanying TersectBrowser+ Article includes the extensions Variant Browser and Gene Models in the same section, while this Technical Documentation keeps the two separate according to the chronological timeline of developments to these extensions. Architecture diagrams are used to display the overlap between various extension components, especially relating to how they orchestrate data flow through the entire software.
+
 \subsection{Variant Browser Extension}
 \label{sec:Browser}
 \subsubsection{Rationale}
