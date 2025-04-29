@@ -30,3 +30,17 @@ jobs:
           path: |
             TechDoc/TechDoc.pdf
             UserManual/UserMan.pdf
+      
+      # Upload compiled pdfs
+      - name: Commit and Push PDFs
+        env: 
+              GITHUB_SECRET: ${{ secrets.GH_SECRET }}
+        run: |
+              # Configure Git with your username and email for the repository
+              git config --global user.name "github-actions[bot]"
+              git config --global user.email "github-actions[bot]@users.noreply.github.com"
+              
+              # Add, commit, and push the PDF files
+              git add TechDoc/TechDoc.pdf UserManual/UserMan.pdf
+              git commit -m "Update compiled PDFs"
+              git push
