@@ -28,5 +28,5 @@ jobs:
         with:
           name: PDFs
           path: |
-            TechDoc.pdf
-            UserMan.pdf
+            TechDoc/TechDoc.pdf
+            UserManual/UserMan.pdf
