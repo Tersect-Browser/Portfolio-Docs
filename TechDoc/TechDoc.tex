@@ -70,24 +70,14 @@ The Admin is defined as an individual with bioinformatics and software design kn
         \verb+python setup_new_tbrowser_dataset.py -f ${fasta} -g ${gff} -V ${vcfs}+
         \begin{itemize}
             \item After running the script, there should be visible a new \verb+config.json+ file in the root folder, as well as a new folder \verb+./~/mongo-data/gp_data_copy+ containing fasta files, gff files, and VCF files along with their index files. The main Tersect index file should be in the folder above. This is where the server will look to find information on tracks when generating the Variant Browser panel.
+            \item This script checks for the install of modules such as SAMtools, BCFtools, and HTSlib, and will attempt to download these if not found. If a multi-sample VCF file is provided, it will split this file into individual sample level VCFs before proceeding. It will make sure these files are unzipped before using TERSECT CLI to build a tersect index for the whole dataset (it sources a previously created .tersect virtual environment to run this). After recompressing and indexing the fasta and VCF files, it will edit the \verb+add_example_dataset.sh+ script to point to the correct index file, and begin dataset addition to TersectBrowser+. Lastly, it will add the GFF file as a gene models track accessible within the browser.
         \end{itemize}
 \end{enumerate}
 
-
-
-
-specified location within the repository: \textit{Tersect-browser/\(\sim \)/mongo-data/gp\_data\_copy/}
-\begin{itemize}
-    \item Download all VCF files in the resequenced dataset. Run tabix on these files to create .tbi index files.
-    \item Download the reference genome FASTA file. Run SAMtools faidx to create .fai index file.
-    \item Download (or generate) an annotation GFF file for the resequenced dataset using SNPeff.  Index the GFF file. Run tabix on this file to create a .tbi index file.
-\end{itemize}
-\begin{itemize}
-\item Use JBrowse CLI text-index tool to generate Trix text searching files (.ix, .ixx, and .meta.json) from the GFF annotation file.
-\item Run the script \verb+add_config_tracks.py+ using these downloaded files. This will use a set of jbrowse arguments to load the datafiles as tracks in the Variant Browser component.
-\item Run the script \verb+change_dataset_files.py+ using these downloaded files as CLI arguments, in order to update the references to these data files in the project.
-\item Run the script \verb+add_example_dataset.sh+ to prepare the dataset.
-\end{itemize}
+\subsection{Deployment with loaded dataset}
+\begin{enumerate}
+    \item Run the Mongo Database using:
+\end{enumerate}
 
 \section{TersectBrowser+}
 \subsection{Variant Browser Extension}
