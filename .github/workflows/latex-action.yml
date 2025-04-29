@@ -13,14 +13,14 @@ jobs:
         uses: xu-cheng/latex-action@v3
         with:
           root_file: TechDoc/TechDoc.tex
-          work_in_root_file_dir: false
+          work_in_root_file_dir: true
 
       # Compile the second LaTeX document
       - name: Compile UserManual
         uses: xu-cheng/latex-action@v3
         with:
           root_file: UserManual/UserMan.tex
-          work_in_root_file_dir: false
+          work_in_root_file_dir: true
 
       # Upload all PDFs as artifacts
       - name: Upload PDF files
@@ -28,5 +28,5 @@ jobs:
         with:
           name: PDFs
           path: |
-            TechDoc/TechDoc.pdf
-            UserManual/UserMan.pdf
+            TechDoc.pdf
+            UserMan.pdf
