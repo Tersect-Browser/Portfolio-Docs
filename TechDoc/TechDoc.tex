@@ -264,27 +264,36 @@ Finally, callHighlightBins() is called, which itself calls highlightBins() from 
 
 \subsection{Barcode Generation Extension}
 \subsubsection{Rationale}
-A key aim for plant breeders when comparing their own plant strains with other cultivars in resequenced datasets is to be able to identify their strain at the genome level. This would allow for protection of intellectual property in the case of an advantageous new introgression that can be uniquely identified. The Barcoding extension allows this unique identification by generating a range of barcodes with a user-specified maximum number of SNPs, so that primers for this barcode are easily generated in a wetlab environment. Metrics comparing these putative barcodes are also provided to the user, and available for local download. 
+A key aim for plant breeders when comparing their own plant strains with other cultivars in resequenced datasets is to be able to identify their strain at the genome level. 
+This would allow for protection of intellectual property in the case of an advantageous new introgression that can be uniquely identified. 
+The Barcoding extension allows this unique accession-specific identification by generating a range of barcodes with a user-specified length and maximum number of SNPs,
+so that the barcodes are easily analysed in wetlab environments. Metrics comparing these putative barcodes are also provided to the user, and available for local download. 
 
 \subsubsection{User Interface}
 \paragraph{Feature Description}
-Given input parameters specified by the user, barcodes are generated via the backend and automatically downloaded for the user in txt format. The downloaded file is titled in the following format for easy identification and to prevent files being overwritten: \textit{SystemDateAndTime\_TB\_Barcode\_Gen\_AccessionName\.txt}.
+Given input parameters specified by the user, barcodes are generated via the backend and can be downloaded in tsv format. The downloaded file is titled in the following format for easy identification and to prevent files being overwritten: \textit{SystemDateAndTime\_TB\_Barcode\_Gen\_AccessionName\.txt}.
 
 The file contains the following information: 
 \begin{itemize}
-    \item \textbf{Barcode sequence} - The base with the accession-specific SNP is enclosed in square brackets
-    \item \textbf{Barcode Start \& Barcode End} - The absolute position of the barcode in the chromosome 
-    \item \textbf{Variant Count} - The number of accession-specific SNPs that are present in the barcode 
-    \item \textbf{Variant Position} - The relative position of the accession-specific SNPs in the barcode 
-    \item \textbf{Repeat Sequence} - The sequence of the 2-bp repeating region. A repeating region is defined as 2 base pairs repeating 3+ times 
-    \item \textbf{Repeat Multiplier} - The number of times the repeat sequence is repeated 
-    \item \textbf{Repeat Start-End} - the relative start and end position of the repeat region within the barcode sequence 
-    \item \textbf{GC Content} - The GC content of the barcode 
+    \item \textbf{Barcode sequence} - The base with the accession-specific SNP is enclosed in square brackets.
+    \item \textbf{Chromosome} - The chromosome on which the barcode is located.
+    \item \textbf{Barcode Start \& Barcode End} - The absolute position of the barcode in the chromosome.
+    \item \textbf{Variant Count} - The number of accession-specific SNPs that are present in the barcode.
+    \item \textbf{Variant Position} - The relative position of the accession-specific SNPs in the barcode. 
+    \item \textbf{Repeat Sequence} - The sequence of the 2-bp repeating region. A repeating region is defined as 2 base pairs repeating 3+ times. 
+    \item \textbf{Repeat Multiplier} - The number of times the repeat sequence is repeated.
+    \item \textbf{Repeat Start-End} - the relative start and end position of the repeat region within the barcode sequence. 
+    \item \textbf{GC Content} - The GC content of the barcode. 
 \end{itemize}
 
 \subsubsection{Technical Description}
 
 Barcode generation is controlled by two scripts: \verb+barcode_finder.sh+ and \verb+find_barcode.py+. 
+
+\paragraph{Bin menu barcode button}:
+A third menu item with the label \verb+Create barcode+ is added to the \verb+getAccessionItem()+ method in \verb+plot-click-menu.component+. The item is styled with the \verb+fa fa-barcode+ icon, and on command opens the \verb+ModalService openBarcodeModal()+ method, passing as arguments the plot state chromosome name and the bin accession label and start and end positions.
+
+\paragraph{Modal Service Component}:
 
 \paragraph{Calling Tersect CLI to extract variants}: 
 \verb+Barcode_finder.sh+ is run on the command line, and takes as input accession name, chromosome, interval start position, interval end position, barcode size, maximum variant number, reference fasta, and tersect TSI index. The chromosome and interval start and end positions are used to define the searchable \verb+REGION+, and the accession name is used to define \verb+SAFE_ACC+ which is used to save files to a temporary file.  
