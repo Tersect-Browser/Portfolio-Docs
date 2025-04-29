@@ -34,14 +34,11 @@ jobs:
       # Upload compiled pdfs
       - name: Commit and Push PDFs
         env: 
-              GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+              GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
               git config --global user.name "github-actions[bot]"
               git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
-              # Adding the remote using the provided token
-              git remote set-url origin https://${GH_TOKEN}@github.com/Tersect-Browser/Portfolio-Docs.git
           
               git add TechDoc/TechDoc.pdf UserManual/UserMan.pdf
-              git commit -m "Update compiled PDFs"
-              git push origin main
+              git commit -m "Update compiled PDFs" || echo "No changes to commit"
+              git push https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git
