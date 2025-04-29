@@ -89,6 +89,12 @@ The Admin is defined as an individual with bioinformatics and software design kn
 
 \section{TersectBrowser+}
 The project brief to extend the original TersectBrowser listed four main extension requirements, as well as a stretch extension. These requirements were provided as discrete goals for the project, and informed the main working priorities for the project timeline, however in practice the four extensions do have significant overlap in terms of code structure. For this reason, the accompanying TersectBrowser+ Article includes the extensions Variant Browser and Gene Models in the same section, while this Technical Documentation keeps the two separate according to the chronological timeline of developments to these extensions. Architecture diagrams are used to display the overlap between various extension components, especially relating to how they orchestrate data flow through the entire software.
+\\
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=15cm, height=9cm]{high_level_arch_draft.png}
+    \caption{Summary Architecture of TersectBrowser+.}
+\end{figure}
 
 \subsection{Variant Browser Extension}
 \label{sec:Browser}
@@ -249,7 +255,7 @@ Bin highlighting is controlled in the \verb+bin-draw.service+ by two functions. 
         \item Tersect-browser.component.ts 
     \end{itemize}
 \end{itemize}
- 
+
 \paragraph{Calling Highlighting Bins} \mbox{}
 \\
 \hl{TBC: Mechanism} of searching VCFs to identify variants 
@@ -270,7 +276,18 @@ The Barcoding extension allows this unique accession-specific identification by 
 so that the barcodes are easily analysed in wetlab environments. Metrics comparing these putative barcodes are also provided to the user, and available for local download. 
 
 \subsubsection{User Interface}
-\paragraph{Feature Description}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=5cm, height=9cm]{UserBarcode.jpg}
+    \caption{User-focused data flow through Barcoding Extension.}
+\end{figure}
+\paragraph{Frontend Display Feature Description}
+When the user clicks on a bin, the popup menu appears and the button "Create barcode" is visible, styled with a barcode icon. When the user clicks on this button, a popup window appears in the centre of the screen. The window title is the corresponding accession name. The window contains the header "Barcode Generator" and contains a description of what is being generated. There is a box for the user to input barcode size, with default set to 150, and the maximum number of variants allowed per barcode (this is an optional parameter. Leaving this blank means all possible barcodes will be returned).  
+
+At the bottom is a green "Generate" button. Hovering over the button turns it dark green, and clicking on this button will call the backend scripts to generate the barcodes output. Whilst scripts are running and barcodes are being generated, a spinner is added to the button to indicate loading. After the script has been generated, the spinner disappears and another green button "Download" appears at the bottom left of the window. Clicking on the button downloads the tsv file containing the barcodes.  
+
+\paragraph{Backend Script Feature Description}
 Given input parameters specified by the user, barcodes are generated via the backend and can be downloaded in tsv format. The downloaded file is titled in the following format for easy identification and to prevent files being overwritten: \textit{SystemDateAndTime\_TB\_Barcode\_Gen\_AccessionName\.txt}.
 
 The file contains the following information: 
@@ -286,30 +303,64 @@ The file contains the following information:
     \item \textbf{GC Content} - The GC content of the barcode. 
 \end{itemize}
 
+
 \subsubsection{Technical Description}
+
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=7cm, height=12cm]{ExtBarcode.jpg}
+    \caption{User-focused data flow through Barcoding Extension.}
+\end{figure}
 
 Barcode generation is controlled by two scripts: \verb+barcode_finder.sh+ and \verb+find_barcode.py+. 
 
-\paragraph{Bin menu barcode button}:
+\paragraph{Bin menu barcode button}:\\
 A third menu item with the label \verb+Create barcode+ is added to the \verb+getAccessionItem()+ method in \verb+plot-click-menu.component+. The item is styled with the \verb+fa fa-barcode+ icon, and on command opens the \verb+ModalService openBarcodeModal()+ method, passing as arguments the plot state chromosome name and the bin accession label and start and end positions.
 
-\paragraph{Modal Service Component}:
+\paragraph{Modal Service Component}:\\
+The observables \verb+barcodeVisible$+, \verb+barcodeTitle$+, \verb+barcodeChromo$+, \verb+barcodeStart$+ and \verb+barcodeEnd$+ are added to \verb+modal.service+. The method \verb+openBarcodeModal()+ is added, accepting as arguments \verb+accessionName+, \verb+chrom+, \verb+startPosition+, and \verb+endPosition+. These arguments are saved to their corresponding observables.  
 
-\paragraph{Calling Tersect CLI to extract variants}: 
+A new modal, \verb+global-barcode-modal+, is created. The modal is imported to app.module and added to app.component. The \verb+global-barcode.component.ts+ imports \verb+ModalService+ and \verb+TersectBackendService+. Variables to hold the modal state, modal loading state, modal title, barcode size, chromosome, interval start position, interval end position, maximum variants per barcode, the downloadable URL and filename are defined. On initialisation, modal state, modal title, chromosome, interval start position and interval end position are saved to observables in modal.service. 
+
+The method \verb+generateBarcode()+ calls and subscribes to the \verb+tersectBackendService generateBarcodes()+ method, setting the \verb+isLoading+ constant to "True" and passing as arguments \verb+modalTitle+, \verb+chromosome+, \verb+startPosition+, \verb+endPosition+, \verb+barcodeSize+, and \verb+maxVariants+. The returned URL and filename are saved to the variables \verb+downloadUrl+ and \verb+downloadFileName+. Once returned, \verb+isLoading+ is set to "False" and \verb+barcodeSize+ is set back to "150". 
+
+The popup window is reset when closed by \verb+resetModal()+ on closing, which sets the \verb+barcodeSize+ to "150", \verb+maxVariants+ and \verb+downloadUrl+ to null, and \verb+downloadFileName+ to an empty string, removing the "Download" button from the popup.  
+
+\paragraph{Modal Service Styling}:\\
+The modal template is defined in \verb+global-barcode.component.html+. The popup window is visible depending on the modal state isVisible, and is centrally position with \verb+modalTitle+ set as the header. Explanation about the barcode service is described in the \verb+modal-title+ and \verb+modal-subtitle+ divs, and the \verb+input-container+ div contains input boxes for barcode size and maximum number of variants, the button "Generate" which calls \verb+generateBarcode()+ and simultaneously shows a \verb+progressSpinner+ whilst the barcodes are being generated. An anchor displays a clickable "Download" p-button that points towards the generated barcode file. The filename is set to \verb+downloadFileName+, and "Download" is only visible once a \verb+downloadUrl+ has been generated for the barcodes file.  
+
+Styling is defined in the \verb+global-barcode.component.css+. Button background colour is set to \verb+#459e00+, background hover colour is set to \verb+#33b357+, and text colour is set to white. The input boxes and labels are given a set width of 200px. 
+
+\paragraph{Router and Backend service}:\\
+A new route, \verb+/generate-barcodes+, is added to \verb+tersect-router+. This router receives in the request the following parameters: \verb+accessionName+, \verb+chrom+, \verb+start+, \verb+end+, \verb+size+ and \verb+maxVar+. Paths to the tsi index and fasta file are defined. The backend script, \verb+barcode_finder.sh+, is called, with the above parameters passed as arguments. A \verb+downloadableURL+ is created, pointing to the created file, and returned in json format.  
+
+The method \verb+generateBarcodes()+, is added to \verb+tersect-backend.service+. It sends a HTTP Post request to the endpoint \verb+/generate-barcodes+, triggering barcode generation. The method returns an observable containing the \verb+downloadableURL+ pointing to the generated barcode file. The method passes the following parameters: 
+\begin{itemize}
+    \item \textbf{accessionName} - a string containing the specified accession name for which to generate unique barcodes 
+    \item \textbf{Chrom} - a string containing the chromosome identifier for the chromosome where the barcodes will be generated 
+    \item \textbf{Start} - a number specifying the start position of the interval in which to generate barcodes 
+    \item \textbf{End} - a number specifying the end position of the interval in which to generate barcodes 
+    \item \textbf{Size} - a number specifying the length of the barcodes 
+    \item \textbf{maxVar} - an optional parameter, specifying the maximum permissible number of variants located within the barcode. Either a number or null, indicating all barcodes with all numbers of variants are generated
+\end{itemize}
+
+
+\paragraph{Calling Tersect CLI to extract variants}: \\
 \verb+Barcode_finder.sh+ is run on the command line, and takes as input accession name, chromosome, interval start position, interval end position, barcode size, maximum variant number, reference fasta, and tersect TSI index. The chromosome and interval start and end positions are used to define the searchable \verb+REGION+, and the accession name is used to define \verb+SAFE_ACC+ which is used to save files to a temporary file.  
 
 The tersect CLI command \verb+tersect view+  is called to extract all variants within the specified region for the specified accession. The output is saved as a temporary TSV file as: \verb+${SAFE_ACC}_acc_unique.tsv+. The tersect CLI command tersect view is again used to extract all variants within the specified region for all accessions except the specified accession. This output is saved as a temporary TSV file as: \verb+${SAFE_ACC}_union_vars.tsv+.  
 
 Lastly, the \verb+find_barcode.py+ file is called, passing as arguments the accession name, reference fasta, chromosome, interval start position, interval end position, barcode size, maximum variant number, and the tersect output files  \verb+${SAFE_ACC}_acc_unique.tsv+ and  \verb+${SAFE_ACC}_union_vars.tsv+. 
 
-\paragraph{Generating barcodes}: 
+\paragraph{Generating barcodes}: \\
 \verb+Find_barcode.py+ requires the following dependencies: argparse, SeqIO, and datetime.  
 
 The reference fasta is parsed using \verb+SeqIO.parse+, yielding sequence records that are converted to a dictionary using \verb+SeqIO.dict+. Using the user-inputted chromosome name, \verb+[args.chrom].seq+ extracts the chromosome sequence from the dictionary and saves it to the variable ref. The user-defined interval start and end positions are used to extract the \verb+ref_window+ from ref. 
 
 The \verb+load_variant_file()+ method imports the tersect output files and creates a dictionary, with variant position being stored as the key and a tuple containing the original base and the alternate base being stored as the dictionary value. Then, the \verb+remove_overlapping_variants()+ method compares the dictionaries and creates a new dictionary \verb+new_unique_vars+ with the same format, containing variants that are only present in the specified accession and not also present in any other accession. The method \verb+apply_variants_to_sequence()+ then uses the \verb+ref_window+ and \verb+new_unique_vars+ to generate an accession-specific sequence, \verb+unique_seq+, containing accession-specific SNPs. Lastly, the \verb+find_barcode_windows()+ method compares \verb+unique_seq+ against \verb+ref_window+ and using a sliding window of 1 base pair, identifies regions where the two sequences differ. The sequence, along with the absolute start and end position, is saved to the variable barcodes.  
 
-\paragraph{Output file and barcode stats}: 
+\paragraph{Output file and barcode stats}: \\
 Statistical metrics are calculated for each barcode, using custom methods. The number of accession-specific variants is calculated using \verb+count_variant_number()+, which also records variant position within the barcode. The variant position is used to highlight the variants within the barcode using the custom \verb+highlight_ref_alt_positions()+ method, which encloses the variant in the following format: \verb+[original base/alternate base]+. Repeat content is calculated using \verb+find_dinucleotide_repeats_custom()+, with repeats being defined as regions where a dinucleotide (2-base pair) sequence repeats consecutively three or more times. The repeating dinucleotide, number of times the dinucleotide repeats, and the start and end positions of the repeat region within the barcode are returned. GC content is calculated as a percentage to six decimal places using \verb+calculate_gc_content()+. 
 
 The barcodes and respective metrics are written to a tsv file. The file name is formatted to include system date and time, \verb+'TB_Barcode_Gen'+, and the specified accession. 
@@ -318,51 +369,6 @@ The barcodes and respective metrics are written to a tsv file. The file name is 
 \subsubsection{Future Improvements}
 \subsection{Future Work and Extension Design}
 \subsubsection{Automated Introgression Search Extension}
-\section{References}
-
-\subsection{Purpose}
-Identify the purpose of this SDD and its intended audience. (e.g. This software design
-document describes the architecture and system design of XX.. ).
-
-
-\subsection{Scope}
-Provide a description and scope of the software and explain the goals, objectives and benefits
-of your project. This will provide the basis for the brief description of your product.
-
-
-\subsection{Overview}
-Provide an overview of this document and its organization.
-
-
-
-\subsection{Reference Material}
-This section is optional.
-List any documents, if any, which were used as sources of information for the test plan. 
-
-
-\subsection{Definitions and Acronyms}
-This section is optional.
-Provide  definitions of all terms, acronyms, and  abbreviations that might exist to  properly 
-interpret the SDD. These definitions should be items used in the SDD that are most likely not 
-known to the audience.
-
-\begin{table}[h]
-\begin{tabular}{|l|l|}
-\hline
-\multicolumn{1}{|c|}{\textbf{Term}} & \multicolumn{1}{c|}{\textbf{Definition}}                                                                                              \\ \hline
-Software Design Document (SDD)      & \begin{tabular}[c]{@{}l@{}}Used as the primary medium for communicating software \\ design information.\end{tabular}                  \\ \hline
-Design Entity                       & \begin{tabular}[c]{@{}l@{}}An element of a design that is structurally and functionally \\ distinct from other elements.\end{tabular} \\ \hline
-\end{tabular}
-\end{table}
-
-\section{System Architecture}
-\subsection{Architectural Design}
-
-\subsection{Design Rationale}
-
-\subsection{Data Description}
-
-\subsection {Data Dictionary}
 
 \section{APPENDICES}
 
