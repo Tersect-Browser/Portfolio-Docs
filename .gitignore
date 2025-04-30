@@ -1,8 +1,9 @@
-UserManual/*
+/UserManual/*
 !UserManual/UserMan.tex
 
-TechDoc/*
+/TechDoc/*
+!TechDoc/*.jpg
 !TechDoc/TechDoc.tex
 
-Article/*
+/Article/*
 !Article/Article.tex
