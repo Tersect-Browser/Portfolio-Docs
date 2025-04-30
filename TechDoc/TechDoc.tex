@@ -96,19 +96,24 @@ The project brief to extend the original TersectBrowser listed four main extensi
     \caption{Summary Architecture of TersectBrowser+.}
 \end{figure}
 
-\subsection{Variant Browser Extension}
+\subsection{Genome Browser Extension}
 \label{sec:Browser}
 \subsubsection{Rationale}
-The main benefit of TersectBrowser relative to similar genome comparison software for displaying key differences within resequenced datasets is its use of Tersect CLI, to index and then quickly query these genomes for investigation at user-defined scale. However, in order for TersectBrowser+ to be competitive as a tool with other browsers, it was necessary to implement features that enhance further investigation within the scope of the same browser. The main view of the original TersectBrowser displayed the density of variants along each chromosome of the reference genome, a view compatible with the addition of a variant browser with multiple tracks providing extra information at a per-base level. 
+The main benefit of TersectBrowser relative to similar genome comparison software for displaying key differences within resequenced datasets is its use of Tersect CLI, to index and then quickly query these genomes for investigation at user-defined scale. However, in order for TersectBrowser+ to be competitive as a tool with other browsers, it was necessary to implement features that enhance further investigation within the scope of the same browser. The main view of the original TersectBrowser displayed the density of variants along each chromosome in comparison to the reference genome. To enhance this view, a variant browser with multiple tracks providing extra information at a per-base level was added to enable to user to directly correlate variant density with accession-specific variants. 
 
-After a review of node-compatible browser tools such as CRAMER, JBrowse was ultimately chosen to carry out this extension request. The initial build of JBrowse into TersectBrowser+ as an extension focused on retaining features most relevant to the user aims, and bringing the styling of the panel in line with the rest of the page. This extension also involved generating a popup window of the same JBrowse component to be initialised when the user was interested in a specific accession or bin region. 
+After a review of node-compatible browser tools such as CRAMER, JBrowse was ultimately chosen to carry out this extension request, due to its high customisability, up-to-date features, and active technical support. The initial build of JBrowse into TersectBrowser+ as an extension focused on retaining features most relevant to the user aims, and bringing the styling of the panel in line with the rest of the page. This extension also involved generating a popup window of the same JBrowse component to be initialised when the user was interested in a specific accession or bin region. 
 
 \subsubsection{User Interface}
 
 \paragraph{Feature Description}
 \begin{itemize}
-    \item Window is located at top of Tersect Browser (TB)- below settings bar but above TB heatmap 
-    \item Jbrowse window (JB) layout - shows only sequence tracks and ruler track/linear genome scale. Zoom features/chromosome selection features have been removed from Jbrowse window. Hamburger button opens menu containing many options, notably track selector, where tracks can be added/removed. The chromosome scale for TB has a dynamic offset depending on the accession/tree view and the zoom level. This is synced between JB and TB, so that the chromosome scale lines up. 
+    \item JBrowse window:
+    \begin{itemize}
+        \item Main window is located at the top of Tersect Browser, below settings bar but above the heatmap 
+        \item Main window shows only sequence tracks and linear genome scale. Interactive features such as zoom anc chromosome selection have been removed from the main window. The container window has a dynamic offset, which changes according to tree view and zoom level to ensure the chromosome scales between TersectBrowser and JBrowse line up. 
+        \item By default, the main window shows only the gene models track.
+        \item Popup window provides a more sandbox experience, providing more user interaction. The user can change zoom level and displayed chromosome, and two scale bars enable both precise and rapid navigation. The hamburger menu on the top left provides the capability for the user to upload their own data to visualise unique tracks.
+        \item By default, the popup window shows the reference sequence track, gene models track, and variant track for the specified accession.
     \begin{itemize}
         \item \hl{Layout TBC}: Set window size
     \end{itemize}
@@ -118,17 +123,13 @@ After a review of node-compatible browser tools such as CRAMER, JBrowse was ulti
         \item Variant tracks for each loaded accession
         \item Gene models FeatureTrack (\nameref{sec:Models})
     \end{itemize}
-    \item Variant browser window is preloaded with default tracks. 
+    \item Syncing of the JBrowse window and the TersectBrowser heatmap includes the following:
     \begin{itemize}
-        \item \hl{Track TBC}: Currently pre-loaded with first 3 tracks from dataset. Should be changed to 1-2 meaningful accessions?
-    \end{itemize}
-    \item Syncing of the Browser pane and the Tersect heatmap pane, including the following:
-    \begin{itemize}
-        \item Zoom synced, both when the zoom plus/minus buttons are pressed, and also when scrolling the mouse to zoom. 
-        \item Bin size changes synced.
-        \item Interval synced using an offset of the Browser pane.
-        \item Chromosome selection changes synced.
-        \item Horizontal scrolling along the Browser and Tersect panes is synced.
+        \item Zoom - both by clicking the plus/minus buttons and by scrolling with the mouse wheel.
+        \item Bin size.
+        \item Selected interval.
+        \item Chromosome.
+        \item Horizontal scrolling along the x-axis.
     \end{itemize}
 \end{itemize}
     
@@ -198,23 +199,23 @@ When a new dataset is added, the custom addition script automatically updates th
 \subsection{Gene Models Extension}
 \label{sec:Models}
 \subsubsection{Rationale}
-Once the Variant Browser panel was added to the main page of TersectBrowser+, this facilitated the inclusion of a specified gene model track. This allows the plant breeder user to identify an area of high variant density on the heatmap, and then check the gene model track to investigate whether this region occurs near a genetic feature with functional relevance to the species.
+Once the Genome Browser panel was added to the main page of TersectBrowser+, this facilitated the inclusion of a reference gene model track. This allows the plant breeder user to identify an area of high variant density on the heatmap, and then check the gene model track to investigate whether this region occurs near a gene of interest.
 
 \subsubsection{User Interface}
 \paragraph{Feature Description}
 \begin{itemize}
-    \item In the Jbrowse window, the first track shows gene models based on the GFF file provided.  
+    \item The gene models track is displayed in the main JBrowse window. 
 %    \item Gene model annotations are based on the official \hl{tomato genome annotation v2.4}: \href{https://phytozome-next.jgi.doe.gov/info/Slycopersicum_ITAG2_4#:~:text=Genome%20Overview,genome%2Cwith%2034%2C725%20gene%20models}{Slycopersicum ITAG annotation v2.4}
-% The above is tomato-specific. Not sure where it fits
-    \item The popup view of the same Jbrowse component has similar default: the first track is the gene models track, and the second track is the variant track for the selected accession.
+% The above is tomato-specific. Not sure where it fits. Probably doesn't fit anywhere - included it in notes so that we knew where the tomato gene models came from
+    \item In the popup window, the gene models track is displayed as the second track, underneath the reference sequence track and above the variant track.
 \end{itemize}
 
 \subsubsection{Technical Description}
 The configuration for the Gene Models \verb+FeatureTrack+ is defined as the first entry in \verb+tracks.ts+. The paths to the sorted and compressed GFF file, along with its corresponding Tabix index, are specified as local server URLs provided by the backend during the Tersect Browser setup. 
 
-The Jbrowse \verb+viewState+ is configured in \verb+JbrowseWrapper.tsx+, as described in Extension-JBrowse. If no accession is selected, the first three tracks stored in \verb+tracks.ts+ are added to the \verb+viewState+. As the Gene Models \verb+FeatureTrack+ is the first track in \verb+tracks.ts+, it is displayed as the first track in the Jbrowse window. 
+The Jbrowse \verb+viewState+ is configured in \verb+JbrowseWrapper.tsx+, as described in Extension-JBrowse. If no accession is selected, the first track stored in \verb+tracks.ts+ (gene models track) is added to the \verb+viewState+.
 
-For the popup window, the JBrowse \verb+viewState+ is configured when an accession is selected in \verb+JbrowseWithAccession.tsx+, as described in \nameref{sec:Browser}. If a track with a \verb+trackId+ matching the selected accession is found, the viewer displays both the first track defined in \verb+tracks.ts+ and the matching track. 
+For the popup window, the JBrowse \verb+viewState+ is configured when an accession is selected in \verb+JbrowseWithAccession.tsx+, as described in \nameref{sec:Browser}. If a track with a \verb+trackId+ matching the selected accession is found, the viewer displays the reference sequence track from \verb+assembly.ts+, the first track defined in \verb+tracks.ts+ (gene model track) and the selected accession variant track. 
 
 \subsubsection{Test Results}
 This extension has been tested with the additional Soybean dataset, with correct functionality. The relevance of the gene models in the GFF file depend on what the user provides in the dataset, and how the GFF file was created. 
@@ -223,16 +224,15 @@ This extension has been tested with the additional Soybean dataset, with correct
 
 \subsection{Feature Search Extension}
 \subsubsection{Rationale}
-The aim of this extension is to allow the user to search specific genes and identify which accession contains a \hl{high/medium/low} impact variant affecting that gene. The bins containing high impact variants for that gene will be highlighted at the accession level, allowing high resolution investigation of variants. The user may alternatively search for any high impact variants within a specified region, in case they lack a specific gene name to search. The highlighted bins may then be selected and opened in the popup \nameref{sec:Browser} window for further investigation.
+The aim of this extension is to allow the user to search selected intervals and identify which accessions contain \hl{high/medium/low} impact variants within that region. The bins containing high impact variants for that gene will be highlighted at the accession level, allowing high resolution investigation of variants. The highlighted bins may then be selected and opened in the popup \nameref{sec:Browser} window for further investigation.
 
 \subsubsection{User Interface}
 \paragraph{Feature Description}
 \begin{itemize}
-    \item Separate search bar in the top right of the tersect browser header where user can input gene name and search button 
-    \item \hl{TBC: Option} for user to select based on region in addition to gene name 
-    \item Popup window for user to select advanced features 
-    \item Output: Bins in the canvas are highlighted red at the chromosomal position where the gene is located, and only for accessions containing a variant impacting that gene 
-    \item Clear button to clear highlighted bins from canvas 
+    \item \verb+Open Variant Search+ button in TersectBrowser+ header, opens popup window for user to select advanced features.
+    \item Popup window where user can select interval, choose impact level, and search button to initiate search.
+    \item Output: Bins in the canvas are highlighted red at the chromosomal position where the variant is located, and only for accessions containing variants of the specified impact.
+    \item Clear button located in TersectBrowser+ header to clear highlighted bins from canvas and restore original heatmmap.
 \end{itemize}
 \subsubsection{Technical Description}
 \paragraph{\hl{Search Bar}}
