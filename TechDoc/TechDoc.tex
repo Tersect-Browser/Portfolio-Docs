@@ -262,6 +262,8 @@ Bin highlighting is controlled in the \verb+bin-draw.service+ by two functions. 
 
 Finally, callHighlightBins() is called, which itself calls highlightBins() from the bin-draw.service, passing as arguments the current interval start position, binsize, displayed accessions in an ordered format, and the searched accessions.  
 \paragraph{\hl{Clear Button }}
+The clear button is located to the right of the \verb+Open variant search+ button and styled with \verb+fa fa-refresh+. It contains the event handler \verb+(click)="refreshBin()"+ that calls the \verb+refreshBin()+ method in \verb+BinDrawService+.
+This method calls \verb+generatePlotArray()+, which re-creates the bin view, and \verb+updateCanvas()+, which redraws the canvas using the re-created bin view.
  
 
 \subsubsection{Test Results}
