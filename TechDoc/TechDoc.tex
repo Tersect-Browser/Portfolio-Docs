@@ -25,15 +25,15 @@
 \maketitle
 
 \section{Overview}
-This Technical Documentation describes the particular details of updating the original TersectBrowser developed by Tomasz Kurowski into the TersectBrowser+ by integrating multiple extension features.
+This Technical Documentation describes the particular details of building upon the original TersectBrowser developed by Tomasz Kurowski into  TersectBrowser+. It outlines the integration of multiple extension features, providing the user with additional display and data analysis capabilities.
 
 \section{Architecture}
-The TersectBrowser+ software is an Angular project, with an original frontend and backend written in Angular 8, and a separate extension space written in Angular 19 using Node 22. It was chosen to use a 'bolt-on' approach for the extensions in order to fit the project delivery within the time requirements, as well as allowing the new extensions to use up-to-date packages. The app is dockerized to allow both versions of node to be used seamlessly in different sections.
+The TersectBrowser+ software is an Angular project, with an original frontend and backend written in Angular 8, and a separate extension space written in Angular 19 using Node 22. This 'bolt-on' approach was chosen for the extensions in order to seamlessly integrate the new extensions with the original workspace within the project time constrainsts. Additionally, this approach allows the new extnesions to use up-to-date packages, resulting in enhanced functionality and a modern design. To run TersectBrowser+ on different platforms, the new extensions are hosted on NPM and can be linked as dependencies within the project.
 
-For the TersectBrowser+ update to the original TersectBrowser, main changes have been made to the frontend implementation of features added in a separate extension section of the project. The main addition is in a 'genome-browser' extension, which contains elements for each of the specific features mentioned in the project brief. 
+Extensions added to TersectBrowser+ include the integration of a genome browser capable of displaying a variety of different tracks, notably variants and gene models, search functionality to identify and display regions containing high impact variants, and a tool to generate accession-specific barcodes. These extensions are hosted in a separate section of the project, but interact with both frontent and backend services to provide a seamless user experience.
 
 \section{Deployment}
-The GitHub project \url{https://github.com/Tersect-Browser/Tersect-browser} README provides detailed instructions for setup, dependencies, and deployment, however the main outline is given here.
+The GitHub project \url{https://github.com/Tersect-Browser/Tersect-browser} README provides detailed instructions for setup, dependencies, and deployment. Here, we expand upon these instructions and give a detailed overview of the structure of each extension.
 
 \subsection{System Requirements}
 TersectBrowser+ can be setup and deployed from both Mac and Windows machines, with variations in the configuration required. 
@@ -88,7 +88,7 @@ The Admin is defined as an individual with bioinformatics and software design kn
 \end{enumerate}
 
 \section{TersectBrowser+}
-The project brief to extend the original TersectBrowser listed four main extension requirements, as well as a stretch extension. These requirements were provided as discrete goals for the project, and informed the main working priorities for the project timeline, however in practice the four extensions do have significant overlap in terms of code structure. For this reason, the accompanying TersectBrowser+ Article includes the extensions Variant Browser and Gene Models in the same section, while this Technical Documentation keeps the two separate according to the chronological timeline of developments to these extensions. Architecture diagrams are used to display the overlap between various extension components, especially relating to how they orchestrate data flow through the entire software.
+The project brief to extend the original TersectBrowser listed four main extension requirements, as well as a stretch extension. These requirements were provided as discrete goals for the project, and informed the main working priorities for the project timeline, however in practice the four extensions do have significant overlap in terms of code structure. For this reason, the accompanying TersectBrowser+ Article includes the extensions Genome Browser and Gene Models in the same section, while this Technical Documentation keeps the two separate according to the chronological timeline of developments to these extensions. Architecture diagrams are used to display the overlap between various extension components, especially relating to how they orchestrate data flow through the entire software.
 \\
 \begin{figure}[h]
     \centering
@@ -114,9 +114,6 @@ After a review of node-compatible browser tools such as CRAMER, JBrowse was ulti
         \item By default, the main window shows only the gene models track.
         \item Popup window provides a more sandbox experience, providing more user interaction. The user can change zoom level and displayed chromosome, and two scale bars enable both precise and rapid navigation. The hamburger menu on the top left provides the capability for the user to upload their own data to visualise unique tracks.
         \item By default, the popup window shows the reference sequence track, gene models track, and variant track for the specified accession.
-    \begin{itemize}
-        \item \hl{Layout TBC}: Set window size
-    \end{itemize}
     \item Tracks:
     \begin{itemize}
         \item Reference sequence 
@@ -272,10 +269,7 @@ This method calls \verb+generatePlotArray()+, which re-creates the bin view, and
 
 \subsection{Barcode Generation Extension}
 \subsubsection{Rationale}
-A key aim for plant breeders when comparing their own plant strains with other cultivars in resequenced datasets is to be able to identify their strain at the genome level. 
-This would allow for protection of intellectual property in the case of an advantageous new introgression that can be uniquely identified. 
-The Barcoding extension allows this unique accession-specific identification by generating a range of barcodes with a user-specified length and maximum number of SNPs,
-so that the barcodes are easily analysed in wetlab environments. Metrics comparing these putative barcodes are also provided to the user, and available for local download. 
+A key aim for plant breeders when comparing their own plant strains with other cultivars in resequenced datasets is to be able to identify their strain at the genome level. This would allow for protection of intellectual property in the case of an advantageous new introgression that can be uniquely identified. The Barcoding extension allows this unique accession-specific identification by generating a range of barcodes with a user-specified length and maximum number of SNPs, so that the barcodes are easily analysed in wetlab environments. Metrics comparing these putative barcodes are also provided to the user, and available for local download. 
 
 \subsubsection{User Interface}
 
