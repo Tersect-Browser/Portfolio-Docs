@@ -232,43 +232,135 @@ The aim of this extension is to allow the user to search selected intervals and 
     \item Output: Bins in the canvas are highlighted red at the chromosomal position where the variant is located, and only for accessions containing variants of the specified impact.
     \item Clear button located in TersectBrowser+ header to clear highlighted bins from canvas and restore original heatmmap.
 \end{itemize}
-\subsubsection{Technical Description}
-\paragraph{\hl{Search Bar}}
-\paragraph{\hl{Popup window with advanced settings }}
-\paragraph{Highlighting bins}
-Bin highlighting is controlled in the \verb+bin-draw.service+ by two functions. The first function, \verb+highlightFeatureBins()+, is defined, taking as arguments a string containing accession names, the bin position along the x-axis, and the \verb+binView+. First, the y-axis bin position for accession names is calculated. Then, the \verb+binView+ is redrawn in greyscale, with the bin colour determined by the difference to the reference accession. Using the x-axis \verb+binIndex+ position and the y-axis accession bin positions, these bins are coloured red in the \verb+binView+. The modified \verb+binView+ is returned as the output. The second function, \verb+highlightBins()+, takes as arguments the start position of the interval and the bin size currently shown in the Tersect pane, a list of ordered accessions shown in the canvas, and the searched accessions. For each searched accession, accession name is reformatted to match the format displayed in the Tersect pane. Then, the bin position along the x-axis is calculated using the \verb+getBinIndexFromPosition()+ function, which takes as arguments the feature position along the chromosome, the interval start position, and the bin size. Then, \verb+highlightFeatureBins()+ is called for each accession. Lastly, the canvas is redrawn using the modified \verb+binView+ output from \verb+highlightFeatureBins()+. 
+\subsection*{4.3.3 Feature Search Extension – Technical Description}
+
+\subsubsection*{4.3.3.1 Creating Search Indexes Per Chromosome}
+
+To enable searching for high impact variants across the dataset, distinct variant sites per chromosome region were obtained using \texttt{tersect}. The resulting VCF file was annotated with the merged VCF files from all accession samples in the dataset.
+
+The final VCF was then compressed using \texttt{bgzip} and indexed with \texttt{tabix}. Additionally, Trix index files \citep{ucsc_trix} were generated for high impact variants on each chromosome to support rapid gene name search suggestions.
+
+\subsubsection*{4.3.3.2 Handling Search Request}
+
+An API endpoint was added to the \texttt{tersect-router} backend to support search functionality. The structure of the endpoint is as follows:
+
+\begin{verbatim}
+/query/:datasetId/variants/:chrom?start=number&end=number&filter=HIGH|MODERATE|LOW
+\end{verbatim}
+
+When searching by gene name, the Trix index files containing gene names associated with high impact variants are utilized.
+
+\subsubsection*{4.3.3.3 Handling Searching by Interval}
+
+The chromosome name is passed as a parameter to the search endpoint, while the start and end positions and the impact filter are passed as query parameters.
+
+The search functionality is powered by \texttt{bcftools}, which is executed using the \texttt{child\_process} module in \texttt{Node.js}. The matching variants are captured by parsing their identifiers in the format \texttt{CHROM:POS:REF:ALT}, and these are stored in a set to ensure uniqueness. 
+
+To associate variants with accession names, a function uses \texttt{tersect} to determine which accessions have each specific variant. A function to get the optimal concurrency (\texttt(getOptimalConcurrency)) was introduced which detected the number of cores present on the server, subtracting 1 from the total and using the rest. To prevent server overload from concurrent \texttt{tersect} calls, the \texttt{p-limit} library is used to control concurrency based on available CPU cores.
+
+The positions are then collated to a map that links positions to a list of accession names. The results are then constructed by looping through each line and getting specific accession list from the map created via the position.
+
+The final result maps positions to accession name lists. These results are formatted and returned to the frontend in the following structure:
+
+\begin{verbatim}
+{
+  region,
+  filter,
+  count,
+  variants,
+  totalAccessions
+}
+\end{verbatim}
+
+The values are described below;
+
 \begin{itemize}
-    \item highlightFeatureBins(accessions: string[], binIndex: number, binView: DistanceBinView) - takes a string of accession names, a binIndex (corresponding to the bin position along the x-axis matching the gene position on the chromosome), and binView. The y-axis index for bins matching accession names in the accessions strings is calculated and combined with the binIndex to colour these specific bins red. The rest of the bins are coloured in greyscale, with saturation depending on binDistance (calculated from tersect on the backend 
-    \begin{itemize}
-        \item Bin-draw.service.ts 
-        \item Called by highlightBins() in bin-draw.service.ts 
-    \end{itemize}
-    \item highlightBins(intervalStart, binsize, orderedAccessions, searchedAccessions) - takes selected interval start position, selected binSize, list of ordered accessions shown in the canvas, and searched accessions (passed from callback function?). Accession names in Jbrowse are in a different format to what is stored in tersect browser, so accession names are reformatted to match tersect browser bins. binIndex is calculated for the selected gene. These two are passed to highlightFeatureBins() - along with this.bins - to highlight the bins. The canvas is then redrawn using the binView calculated in highlightFeatureBins(). 
-    \begin{itemize}
-        \item Bin-draw.service.ts 
-        \item Called by callHighlightBins() in tersect-browser.component.ts 
-    \end{itemize}
-    \item callHighlightBins(searchedAcessions) - takes searchedAccessions. Calls highlightBins(), passing along  selected interval start position, selected binSize, list of ordered accessions shown in the canvas, and searched accessions (passed from callback function?). 
-    \begin{itemize}
-        \item Tersect-browser.component.ts 
-    \end{itemize}
+    \item \textbf{region} - a string containing the region or interval on the selected chromosome (e.g., "chr1:100000-200000")
+    \item \textbf{filter} - a string specifying the variant impact filter applied (e.g., "HIGH", "MODERATE", or "LOW")
+    \item \textbf{count} - an integer representing the total number of variants found in the region with the specified filter
+    \item \textbf{variants} - an array of variant objects, each including chromosome, position, reference, alternate, effect, and accessions
+    \item \textbf{totalAccessions} - an integer specifying the total number of accessions in the dataset
 \end{itemize}
 
-\paragraph{Calling Highlighting Bins} \mbox{}
-\\
-\hl{TBC: Mechanism} of searching VCFs to identify variants 
+Each variant is formatted as:
 
-Finally, callHighlightBins() is called, which itself calls highlightBins() from the bin-draw.service, passing as arguments the current interval start position, binsize, displayed accessions in an ordered format, and the searched accessions.  
-\paragraph{\hl{Clear Button }}
-The clear button is located to the right of the \verb+Open variant search+ button and styled with \verb+fa fa-refresh+. It contains the event handler \verb+(click)="refreshBin()"+ that calls the \verb+refreshBin()+ method in \verb+BinDrawService+.
-This method calls \verb+generatePlotArray()+, which re-creates the bin view, and \verb+updateCanvas()+, which redraws the canvas using the re-created bin view.
- 
+\begin{verbatim}
+[
+  {
+    chr,
+    pos: { start: pos },
+    ref,
+    alt,
+    eff,
+    accessions
+  }
+]
+\end{verbatim}
 
-\subsubsection{Test Results}
+The values are described below;
 
-\subsubsection{Future Improvements}
-Currently, only bins on the TersectBrowser+ heatmap are highlighted in red to indicate the positions of high-impact variants. Highlighting could be extended across the Genome Browser and Gene Models extension, so that gene models matching the parameters of the feature search query are also highlighted in red.
+\begin{itemize}
+    \item \textbf{chr} - a string specifying the chromosome name
+    \item \textbf{pos} - an object with a \texttt{start} field indicating the variant position
+    \item \textbf{ref} - a string specifying the reference allele
+    \item \textbf{alt} - a string specifying the alternate allele
+    \item \textbf{eff} - a string describing the effect or impact of the variant (e.g., "HIGH", "MODERATE", "LOW")
+    \item \textbf{accessions} - an array of accession names (strings) that contain this variant
+\end{itemize}
 
+\subsubsection*{4.3.3.4 Handling Searching by Gene Name}
+
+Gene-based searches use the pre-built Trix index files, which currently include only high impact variants.
+
+The Trix index is generated by exporting high impact variants per chromosome to a text file, using this identifier format:
+
+\begin{verbatim}
+docId = "${chrom}:${pos}:${ref}:${alt}|${sample}|${effBlock}"
+\end{verbatim}
+
+The index is built using \texttt{ixIxx}.
+
+\subsubsection*{4.3.3.5 Linking with the Frontend}
+
+The gene search extension is developed in React to enable integration with future \texttt{JBrowse} sessions. Despite the main application being Angular (v19), React components are embedded using the \texttt{ReactComponentDirective} from the \texttt{@ngeenx/ngx-react} package.
+
+Two UI components support search configuration:
+\begin{itemize}
+  \item A range slider to select intervals.
+  \item An autocomplete input for gene ID search.
+\end{itemize}
+
+The React component handles the form submission, triggers the appropriate search via API or Trix, and returns results through a callback. Bin highlighting is then managed by the legacy tersect browser app.
+
+\subsubsection*{4.3.3.6 Other Ways to Trigger Variant Search}
+
+Variant searches can also be triggered from:
+\begin{itemize}
+  \item Each bin on the bin plot.
+  \item A selected range on the scale plot.
+\end{itemize}
+
+These triggers emit a custom event \texttt{tersect-search-variants}, which sets the interval and opens the modal for user interaction.
+
+\subsubsection*{4.3.3.7 Highlighting Bins}
+
+Bin highlighting is handled by two main functions in \texttt{bin-draw.service.ts}:
+
+\begin{itemize}
+  \item \texttt{highlightFeatureBins(accessions, binIndex, binView)}: Computes the y-axis position for each accession, redraws the bin view in greyscale, and highlights selected bins in red.
+  \item \texttt{highlightBins(intervalStart, binSize, orderedAccessions, searchedAccessions)}: Calculates the \texttt{binIndex} from position and bin size, and calls \texttt{highlightFeatureBins()}.
+\end{itemize}
+
+The top-level function \texttt{callHighlightBins(searchedAccessions)} is defined in \texttt{tersect-browser.component.ts}, where it retrieves interval, bin size, and accession info, and calls \texttt{highlightBins()}.
+
+\subsubsection*{VCF Mechanism Summary}
+
+The overall mechanism for variant search begins with API queries, uses either \texttt{bcftools} or Trix for data retrieval, links variants to accessions with \texttt{tersect}, and finally triggers the highlighting of bins in the Tersect UI.
+
+\paragraph{Other Triggers for Variant Search}
+Variant search also triggered via bin plot or scale plot selection using the \texttt{tersect-search-variants} custom event.
+
+\clearpage
 
 \subsection{Barcode Generation Extension}
 \subsubsection{Rationale}
@@ -374,6 +466,8 @@ Currently, barcode viewing is limited to the downloaded file. It can be extended
 \section{APPENDICES}
 
 \section {References}
-
-
+\begin{thebibliography}{9}
+\bibitem{ucsc_trix}
+University of California, Santa Cruz. (n.d.). Trix Index Files. UCSC Genome Browser.
+\end{thebibliography}
 \end{document}
