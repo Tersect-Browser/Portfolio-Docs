@@ -25,12 +25,30 @@
 \maketitle
 
 \section{Overview}
-This Technical Documentation describes the particular details of building upon the original TersectBrowser developed by Tomasz Kurowski into  TersectBrowser+. It outlines the integration of multiple extension features, providing the user with additional display and data analysis capabilities.
+This document describes the technical specifications and extended functionalities of Tersect Browser+, a web-based application for the exploration of genome and variant data in cultivated and wild-type crops. Building upon the original Tersect Browser, developed by Tomasz Kurowski [Reference], this enhanced version integrates additional features to support the identification and analysis of introgressions within accession species. The system leverages a MongoDB database to manage genomic datasets efficiently and provides a suite of interactive tools for biological interpretation.
+
+The original Tersect Browser offered a streamlined interface for investigating genomic intervals and phylogenetic relationships, powered by the high-performance Tersect CLI. It included dynamic visualizations such as phylogenetic trees and genetic distance heatmaps derived from resequenced genome data.
+
+Tersect Browser+ extends this foundation with several key enhancements aimed at cultivar biology. These include a genome browser, gene model visualizer, feature search tools, and barcode generation utilities—together offering a more powerful and versatile platform for crop genetics research.
+
+%This Technical Documentation describes the particular details of building upon the original TersectBrowser developed by Tomasz Kurowski into  TersectBrowser+. It outlines the integration of multiple extension features, providing the user with additional display and data analysis capabilities.
 
 \section{Architecture}
-The TersectBrowser+ software is an Angular project, with an original frontend and backend written in Angular 8, and a separate extension space written in Angular 19 using Node 22. This `bolt-on' approach was chosen for the extensions in order to seamlessly integrate the new extensions with the original workspace within the project time constrainsts. Additionally, this approach allows the new extnesions to use up-to-date packages, resulting in enhanced functionality and a modern design. To run TersectBrowser+ on different platforms, the new extensions are hosted on NPM and can be linked as dependencies within the project.
+The \textit{Tersect Browser+} application is composed of four main components: 
+\begin{itemize}
+    \item the frontend; 
+    \item the backend; 
+    \item common utilities; and, 
+    \item extension modules.
+\end{itemize} 
 
-Extensions added to TersectBrowser+ include the integration of a genome browser capable of displaying a variety of different tracks, notably variants and gene models, search functionality to identify and display regions containing high impact variants, and a tool to generate accession-specific barcodes. These extensions are hosted in a separate section of the project, but interact with both frontent and backend services to provide a seamless user experience.
+The frontend is a browser-based interface developed in Angular and React, designed for interactive data visualization, including distance plots, accession selectors, and genome browser integration. The backend, built in Node.js and Express, provides API endpoints, data models, and utility scripts to serve genomic data and computation results from a MongoDB database. A set of common modules supports both frontend and backend logic with shared resources. Additionally, the architecture supports pluggable extensions, such as the genome-browser, which provide domain-specific capabilities like rendering gene models or enabling barcode-based comparisons. Supporting data files, environment configurations, and Python scripting for preprocessing or bioinformatics workflows are organized in separate folders for data loading and virtual environments, enabling efficient pipeline integration and deployment.
+
+%The TersectBrowser+ software is an Angular project, with an original frontend and backend written in Angular 8, and a separate extension space written in Angular 19 using Node 22. This `bolt-on' approach was chosen for the extensions in order to seamlessly integrate the new extensions with the original workspace within the project time constrainsts. Additionally, this approach allows the new extnesions to use up-to-date packages, resulting in enhanced functionality and a modern design. To run TersectBrowser+ on different platforms, the new extensions are hosted on NPM and can be linked as dependencies within the project.
+
+%Extensions added to TersectBrowser+ include the integration of a genome browser capable of displaying a variety of different tracks, notably variants and gene models, search functionality to identify and display regions containing high impact variants, and a tool to generate accession-specific barcodes. These extensions are hosted in a separate section of the project, but interact with both frontent and backend services to provide a seamless user experience.
+
+\textit{Tersect Browser+} is primarily built using Angular 8, preserving the architecture of the original application. To enable modern feature development without disrupting the existing codebase, a dedicated extension layer has been introduced using Angular 15 and Node.js 22. This modular, "bolt-on" extension framework allows for the seamless integration of new capabilities while taking advantage of the latest frontend and backend technologies. Extensions are developed independently and published to NPM, making them easily linkable through project dependencies. This hybrid approach ensures forward compatibility and scalability, while maintaining stability in the core application. Future versions of \textit{Tersect Browser+} may explore fully migrating the main application to a more unified and modern framework.
 
 \section{Deployment}
 The GitHub project \url{https://github.com/Tersect-Browser/Tersect-browser} README provides detailed instructions for setup, dependencies, and deployment. Here, we expand upon these instructions and give a detailed overview of the structure of each extension.
