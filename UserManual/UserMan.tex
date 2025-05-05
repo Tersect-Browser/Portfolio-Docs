@@ -28,6 +28,20 @@
 TersectBrowser+ is designed to be useful to a range of Users. Hosting features within the same browser allows the conducting of full analyses within the same page, benefitting both a more experienced researcher as well as a novice to the field. 
 
 \section{Use Cases - Video transcript}
+1a. TB Homepage & main page
+On opening of TersectBrowser+, we are met with the introductory page displaying the loaded datasets. The user can click on one of the available datasets, which will bring them to the main TersectBrowser+ exploratory page. The main body of the page is composed of a heatmap, comparing all accessions within the dataset against the selected reference accession. Darker bins represent areas with greater variation between the accession and the reference, whilst lighter bins represent more similar sequences. Vertical red bars signify gaps in the reference genome. Above the heatmap is a scale bar indicating chromosome position. 
+
+1b. TB Main page header and buttons
+The menu bar above the heatmap contains navigational controls. Newly added in the TersectBrowser+ release is the `binoculars' button, the `Open Variant Search' button, and the `refresh' button.
+
+2a. Genome browser main window
+To view gene models corresponding to chromosome position, the user can click on the `binoculars' button, which will open the genome browser panel above the heatmap, showing gene models for the corresponding chromosomal positions. The panel has a left-margin offset to ensure the chromosomal scale bar between the genome browser panel and heatmap are aligned. In this view, the genome browser panel and heatmap are fully synced, such that any changes made to the horizontal scroll along the x-axis, zoom level,bin size, selected interval, or selected chromosome, will be immediately reflected in both the heatmap and genome browser panel. 
+
+The initial view will show an error message, prompting the user to zoom in on decrease the bin size, as the default view of TersectBrowser+ is too zoomed out. The genome browser panel has a set height that can be changed by clicking and dragging the bottom of the panel. The user can also scroll vertically along the y-axis to view all gene models without changing the view of the TersectBrowser+ heatmap. 
+
+2b. Genome Browser popup window
+If the user is interested in a specific accession or a specific bin, they can click on the specific accession or bin, which will open a popup window displaying a `View in browser' button. Clicking on this button will open a large popup window that is detached from the background TersectBrowser+, allowing the user to change the view by zooming or scrolling in the popup window without changing the view in TersectBrowser+. If the user has opened the genome browser popup window from accession name, the window will be fully zoomed out and show the entire chromosome. If the user has opened the genome browser popup window from a specific bin, the window will be zoomed in to show that particular interval. 
+
 
 \subsection{Example 1:} A tomato genetics researcher wishes to identify differences between a domestic tomato genome and a large number of resequenced genomes of wild relatives. 
 
