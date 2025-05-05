@@ -31,15 +31,7 @@ The original Tersect Browser offered a streamlined interface for investigating g
 
 Tersect Browser+ extends this foundation with several key enhancements aimed at cultivar biology. These include a genome browser, gene model visualizer, feature search tools, and barcode generation utilities—together offering a more powerful and versatile platform for crop genetics research.
 
-The requirements for the application extension were described in [reference Tom’s briefing on this from March]. For the biologist to be able to:  
-
-\begin{itemize}
-    \item open a genome browser within Tersect Browser and investigate specific variants.
-    \item see specific genes of interests against suspected introgressions. 
-    \item identify areas where high-impact variants are visible. 
-    \item be able to genereate DNA barcodes for the varioius cultivars and species in the dataset. 
-    \item to be able to load additional datasets, including for other crops. 
-\end{itemize}
+The requirements for the application extension were described in [reference Tom’s briefing on this from March]. For the biologist to be able to be able to explore plant genomes and introgressions in real time, by applying a set of flexible expressions, resequenced variant data and enabling dynamic visualisations.  
 
 The extensions were designed and added by the named authors under the supervision of of Dr Tomasz Kurowski between March and May 2025. 
 
@@ -54,7 +46,12 @@ The \textit{Tersect Browser+} application is composed of four main components:
     \item extension modules.
 \end{itemize} 
 
-[Insert figure in here]
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=15cm, height=9cm]{high_level_arch_draft.png}
+    \caption{Summary Architecture of TersectBrowser+.}
+\end{figure}
+
 
 The frontend is a browser-based interface developed in Angular and React, designed for interactive data visualization, including distance plots, accession selectors, and genome browser integration. The backend, built in Node.js and Express, provides API endpoints, data models, and utility scripts to serve genomic data and computation results from a MongoDB database. A set of common modules supports both frontend and backend logic with shared resources. Additionally, the architecture supports pluggable extensions, such as the genome-browser, which provide domain-specific capabilities like rendering gene models or enabling barcode-based comparisons. Supporting data files, environment configurations, and Python scripting for preprocessing or bioinformatics workflows are organized in separate folders for data loading and virtual environments, enabling efficient pipeline integration and deployment.
 
@@ -63,6 +60,22 @@ The frontend is a browser-based interface developed in Angular and React, design
 %Extensions added to TersectBrowser+ include the integration of a genome browser capable of displaying a variety of different tracks, notably variants and gene models, search functionality to identify and display regions containing high impact variants, and a tool to generate accession-specific barcodes. These extensions are hosted in a separate section of the project, but interact with both frontent and backend services to provide a seamless user experience.
 
 \textit{Tersect Browser+} is primarily built using Angular 8, preserving the architecture of the original application. To enable modern feature development without disrupting the existing codebase, a dedicated extension layer has been introduced using Angular 15 and Node.js 22. This modular, "bolt-on" extension framework allows for the seamless integration of new capabilities while taking advantage of the latest frontend and backend technologies. Extensions are developed independently and published to NPM, making them easily linkable through project dependencies. This hybrid approach ensures forward compatibility and scalability, while maintaining stability in the core application. Future versions of \textit{Tersect Browser+} may explore fully migrating the main application to a more unified and modern framework.
+
+\section{Use Case}
+
+The study of cultivar genomes has evolved rapidly, with growing emphasis on mapping introgressions—segments of DNA from wild plant species that have been incorporated into cultivated lines. A variety of bioinformatic tools explore and characterize existing introgressions and identify commercially relevant regions for future breeding. Biologists have a requirement to explore plant genomes and introgressions in real time, by applying a set of flexible expressions, resequenced variant data and enabling dynamic visualisations. The requirements also include the ability to undertake such investigations with tools to browse genomes, view gene models, search for features and generate barcodes without leaving the web-page. 
+
+The primary use cases considered were therefore the ability to: 
+
+\begin{itemize}
+    \item (1) open a genome browser within Tersect Browser and investigate specific variants;
+    \item (2) see specific genes of interests against suspected introgressions; 
+    \item (3) identify areas where high-impact variants are visible; 
+    \item (4) be able to genereate DNA barcodes for the varioius cultivars and species in the dataset; and,  
+    \item (5) to be able to load additional datasets, including for other crops. 
+\end{itemize}
+
+%listed four main extension requirements, as well as a stretch extension. These requirements were provided as discrete goals for the project, and informed the main working priorities for the project timeline, however in practice the four extensions do have significant overlap in terms of code structure. For this reason, the accompanying TersectBrowser+ Article includes the extensions Genome Browser and Gene Models in the same section, while this Technical Documentation keeps the two separate according to the chronological timeline of developments to these extensions. Architecture diagrams are used to display the overlap between various extension components, especially relating to how they orchestrate data flow through the entire software.
 
 \section{Deployment}
 The GitHub project \url{https://github.com/Tersect-Browser/Tersect-browser} README provides detailed instructions for setup, dependencies, and deployment. This section provides additional information. 
@@ -86,7 +99,7 @@ The main requirements for TersectBrowser+ deployment are:
 
 \subsection{Dataset Upload}
 
-The Admin is defined as an individual with bioinformatics and software design knowledge, background comprehension for all sections of this Technical Documentation, and acting to facilitate the use of a deployed TersectBrowser+ by the plant breeder main user of the software. When a new dataset is requested for deployment on TersectBrowser+, the Admin will need to follow the below steps:
+The Admin is defined as an individual with bioinformatics and software design knowledge, background comprehension for all sections of this Technical Documentation, and acting to facilitate the use of a deployed \textit{TersectBrowser+} by the plant breeder main user of the software. When a new dataset is requested for deployment on  \textit{TersectBrowser+}, the Admin will need to follow the below steps:
 \begin{enumerate}
     \item Collect background context and required data from the user.
 \begin{itemize}
@@ -96,7 +109,7 @@ The Admin is defined as an individual with bioinformatics and software design kn
     \item A GFF file of gene model information for the reference genome, produced using SNPeff software. If not using SNPeff, ensure that variant impact levels are categorised into `High', `Medium', and `Low' impact. If not provided, the gene model track in the Variant Browser will be unavailable. 
     \item Whether there are prior identified introgressions known to be functionally relevant for the species. These can be used to `check' the ability of TersectBrowser+ to identify introgressed regions for the specified dataset.
 \end{itemize}
-    \item Clone the GitHub repository of TersectBrowser+ to the local machine. Follow the README from \hyperlink {https://github.com/Tersect-Browser/Tersect-browser.git}{TersectBrowser+ GitHub} for installation instructions.
+    \item Clone the GitHub repository of  \textit{TersectBrowser+} to the local machine. Follow the README from \hyperlink {https://github.com/Tersect-Browser/Tersect-browser.git}{TersectBrowser+ GitHub} for installation instructions.
     \item Download relevant files from section (1) to a new folder within the root directory of the local Tersect-browser repository.
     \item Set environment variables \verb+fasta+, \verb+gff+, and \verb+vcfs+ according to their new location relative to the root of Tersect-browser.
     \item Run the script \verb+setup_new_tbrowser_dataset.py+ using the environment variables of files as input:
@@ -121,14 +134,18 @@ The Admin is defined as an individual with bioinformatics and software design kn
     \item Open TersectBrowser+ on \url{http://localhost:4200/TersectBrowserGP/}
 \end{enumerate}
 
-\section{TersectBrowser+}
-The project brief to extend the original TersectBrowser listed four main extension requirements, as well as a stretch extension. These requirements were provided as discrete goals for the project, and informed the main working priorities for the project timeline, however in practice the four extensions do have significant overlap in terms of code structure. For this reason, the accompanying TersectBrowser+ Article includes the extensions Genome Browser and Gene Models in the same section, while this Technical Documentation keeps the two separate according to the chronological timeline of developments to these extensions. Architecture diagrams are used to display the overlap between various extension components, especially relating to how they orchestrate data flow through the entire software.
+\section{Functional Capabilities and Extensions}
+
+\textit{Tersect Browser+} comprises Tersect CLI, Tersect Browser and four extensions that meet the \textit{Teresect Browser+} use case in Section 3. These were: 
+
+\begin{itemize}
+    \item Genome Browser; 
+    \item Gene Model; 
+    \item Feature Search; and, 
+    \item Barcode Generation
+\end{itemize}
+
 \\
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=15cm, height=9cm]{high_level_arch_draft.png}
-    \caption{Summary Architecture of TersectBrowser+.}
-\end{figure}
 
 \subsection{Genome Browser Extension}
 \label{sec:Browser}
