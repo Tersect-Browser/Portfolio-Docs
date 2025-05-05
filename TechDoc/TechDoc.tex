@@ -53,13 +53,29 @@ The \textit{Tersect Browser+} application is composed of four main components:
 \end{figure}
 
 
-The frontend is a browser-based interface developed in Angular and React, designed for interactive data visualization, including distance plots, accession selectors, and genome browser integration. The backend, built in Node.js and Express, provides API endpoints, data models, and utility scripts to serve genomic data and computation results from a MongoDB database. A set of common modules supports both frontend and backend logic with shared resources. Additionally, the architecture supports pluggable extensions, such as the genome-browser, which provide domain-specific capabilities like rendering gene models or enabling barcode-based comparisons. Supporting data files, environment configurations, and Python scripting for preprocessing or bioinformatics workflows are organized in separate folders for data loading and virtual environments, enabling efficient pipeline integration and deployment.
+The frontend is a browser-based interface developed in Angular JS designed for interactive data visualization, including distance plots, accession selectors. 
+
+ The backend, built in Node.js and Express, provides API endpoints, data models, and utility scripts to serve genomic data and computation results from a MongoDB database.
+
+ A set of common modules supports both frontend and backend logic with shared resources.  Additionally, the architecture supports pluggable extensions, such as the genome-browser which provide domain-specific capabilities like rendering gene models or enabling barcode-based comparisons. 
+
+ Supporting data files, environment configurations, and Python scripting for preprocessing or bioinformatics workflows are organized in separate folders for data loading and virtual environments, enabling efficient pipeline integration and deployment.  
+
+\subsection{Embedding The Extensions }
 
 %The TersectBrowser+ software is an Angular project, with an original frontend and backend written in Angular 8, and a separate extension space written in Angular 19 using Node 22. This `bolt-on' approach was chosen for the extensions in order to seamlessly integrate the new extensions with the original workspace within the project time constrainsts. Additionally, this approach allows the new extnesions to use up-to-date packages, resulting in enhanced functionality and a modern design. To run TersectBrowser+ on different platforms, the new extensions are hosted on NPM and can be linked as dependencies within the project.
 
 %Extensions added to TersectBrowser+ include the integration of a genome browser capable of displaying a variety of different tracks, notably variants and gene models, search functionality to identify and display regions containing high impact variants, and a tool to generate accession-specific barcodes. These extensions are hosted in a separate section of the project, but interact with both frontent and backend services to provide a seamless user experience.
 
-\textit{Tersect Browser+} is primarily built using Angular 8, preserving the architecture of the original application. To enable modern feature development without disrupting the existing codebase, a dedicated extension layer has been introduced using Angular 15 and Node.js 22. This modular, "bolt-on" extension framework allows for the seamless integration of new capabilities while taking advantage of the latest frontend and backend technologies. Extensions are developed independently and published to NPM, making them easily linkable through project dependencies. This hybrid approach ensures forward compatibility and scalability, while maintaining stability in the core application. Future versions of \textit{Tersect Browser+} may explore fully migrating the main application to a more unified and modern framework.
+\textit{Tersect Browser+} is originally built using Angular 8, to enable modern feature development without disrupting the existing codebase, a dedicated extension layer has been introduced using Angular 15 and Node.js 22.  
+
+New extensions are converted to web components and bundled with rollup [TODO: Reference] to a single min.js bundle, the target bundle is then transpiled to a version compatible with older browsers with babel [TODO: Reference]. The final output is deployed on NPM.
+
+The genomebrowser relies on \texttt{Jbrowse} [TODO: Reference] extensively. Since Jbrowse is written in \texttt{React} [TODO: Reference], it is embedded in the new angular app via the \texttt{ReactComponentDirective} provided by the \texttt{@ngeenx/ngx-react} package on NPM. 
+
+This modular,” bolt-on” extension framework allows for the seamless integration of new capabilities while taking advantage of the latest frontend technologies.
+
+Extensions are developed independently and published to NPM, making them easily linkable through project dependencies. This hybrid approach ensures forward compatibility and scalability, while maintaining stability in the core application. Future versions of Tersect Browser+ may explore fully migrating the main application to a more unified and modern framework.
 
 \section{Use Case}
 
@@ -270,7 +286,7 @@ For the popup window, the JBrowse \verb+viewState+ is configured when an accessi
 
 \subsubsection{Test Results}
 This extension has been tested with the additional Soybean dataset, with correct functionality. The relevance of the gene models in the GFF file depend on what the user provides in the dataset, and how the GFF file was created. 
-
+\clearpage
 \subsection{Feature Search Extension}
 \subsubsection{Rationale}
 The aim of this extension is to allow the user to search selected intervals and identify which accessions contain \hl{high/medium/low} impact variants within that region. The bins containing high impact variants for that gene will be highlighted at the accession level, allowing high resolution investigation of variants. The highlighted bins may then be selected and opened in the popup \nameref{sec:Browser} window for further investigation.
@@ -284,15 +300,15 @@ The aim of this extension is to allow the user to search selected intervals and 
     \item Clear button located in TersectBrowser+ header to clear highlighted bins from canvas and restore original heatmmap.
 \end{itemize}
 
-\subsection*{4.3.3 Feature Search Extension – Technical Description}
+\subsection{Feature Search Extension - Technical Description}
 
-\subsubsection*{4.3.3.1 Creating Search Indexes Per Chromosome}
+\subsubsection{Creating Search Indexes Per Chromosome}
 
 To enable searching for high impact variants across the dataset, distinct variant sites per chromosome region were obtained using \texttt{tersect}. The resulting VCF file was annotated with the merged VCF files from all accession samples in the dataset.
 
-The final VCF was then compressed using \texttt{bgzip} and indexed with \texttt{tabix}. Additionally, Trix index files \citep{ucsc_trix} were generated for high impact variants on each chromosome to support rapid gene name search suggestions.
+The final VCF was then compressed using \texttt{bgzip} and indexed with \texttt{tabix}. Additionally, Trix index files [TODO:reference] were generated for high impact variants on each chromosome to support rapid gene name search suggestions.
 
-\subsubsection*{4.3.3.2 Handling Search Request}
+\subsubsection{Handling Search Request}
 
 An API endpoint was added to the \texttt{tersect-router} backend to support search functionality. The structure of the endpoint is as follows:
 
@@ -302,7 +318,7 @@ An API endpoint was added to the \texttt{tersect-router} backend to support sear
 
 When searching by gene name, the Trix index files containing gene names associated with high impact variants are utilized.
 
-\subsubsection*{4.3.3.3 Handling Searching by Interval}
+\subsubsection{Handling Searching by Interval}
 
 The chromosome name is passed as a parameter to the search endpoint, while the start and end positions and the impact filter are passed as query parameters.
 
@@ -314,15 +330,15 @@ The positions are then collated to a map that links positions to a list of acces
 
 The final result maps positions to accession name lists. These results are formatted and returned to the frontend in the following structure:
 
-\begin{verbatim}
-{
-  region,
-  filter,
-  count,
-  variants,
-  totalAccessions
-}
-\end{verbatim}
+        \begin{verbatim}
+        {
+        region,
+        filter,
+        count,
+        variants,
+        totalAccessions
+        }
+        \end{verbatim}
 
 The values are described below;
 
@@ -336,18 +352,18 @@ The values are described below;
 
 Each variant is formatted as:
 
-\begin{verbatim}
-[
-  {
-    chr,
-    pos: { start: pos },
-    ref,
-    alt,
-    eff,
-    accessions
-  }
-]
-\end{verbatim}
+        \begin{verbatim}
+        [
+        {
+            chr,
+            pos: { start: pos },
+            ref,
+            alt,
+            eff,
+            accessions
+        }
+        ]
+        \end{verbatim}
 
 The values are described below;
 
@@ -360,7 +376,7 @@ The values are described below;
     \item \textbf{accessions} - an array of accession names (strings) that contain this variant
 \end{itemize}
 
-\subsubsection*{4.3.3.4 Handling Searching by Gene Name}
+\subsubsection{Handling Searching by Gene Name}
 
 Gene-based searches use the pre-built Trix index files, which currently include only high impact variants.
 
@@ -372,7 +388,7 @@ docId = "${chrom}:${pos}:${ref}:${alt}|${sample}|${effBlock}"
 
 The index is built using \texttt{ixIxx}.
 
-\subsubsection*{4.3.3.5 Linking with the Frontend}
+\subsubsection{Linking with the Frontend}
 
 The gene search extension is developed in React to enable integration with future \texttt{JBrowse} sessions. Despite the main application being Angular (v19), React components are embedded using the \texttt{ReactComponentDirective} from the \texttt{@ngeenx/ngx-react} package.
 
@@ -384,7 +400,7 @@ Two UI components support search configuration:
 
 The React component handles the form submission, triggers the appropriate search via API or Trix, and returns results through a callback. Bin highlighting is then managed by the legacy tersect browser app.
 
-\subsubsection*{4.3.3.6 Other Ways to Trigger Variant Search}
+\subsubsection{Other Ways to Trigger Variant Search}
 
 Variant searches can also be triggered from:
 \begin{itemize}
@@ -394,7 +410,7 @@ Variant searches can also be triggered from:
 
 These triggers emit a custom event \texttt{tersect-search-variants}, which sets the interval and opens the modal for user interaction.
 
-\subsubsection*{4.3.3.7 Highlighting Bins}
+\subsubsection{Highlighting Bins}
 
 Bin highlighting is handled by two main functions in \texttt{bin-draw.service.ts}:
 
@@ -405,7 +421,7 @@ Bin highlighting is handled by two main functions in \texttt{bin-draw.service.ts
 
 The top-level function \texttt{callHighlightBins(searchedAccessions)} is defined in \texttt{tersect-browser.component.ts}, where it retrieves interval, bin size, and accession info, and calls \texttt{highlightBins()}.
 
-\subsubsection*{VCF Mechanism Summary}
+\subsubsection{VCF Mechanism Summary}
 
 The overall mechanism for variant search begins with API queries, uses either \texttt{bcftools} or Trix for data retrieval, links variants to accessions with \texttt{tersect}, and finally triggers the highlighting of bins in the Tersect UI.
 
