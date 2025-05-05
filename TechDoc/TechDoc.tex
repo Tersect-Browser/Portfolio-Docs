@@ -33,7 +33,7 @@ Tersect Browser+ extends this foundation with several key enhancements aimed at 
 
 The requirements for the application extension were described in [reference Tom’s briefing on this from March]. For the biologist to be able to be able to explore plant genomes and introgressions in real time, by applying a set of flexible expressions, resequenced variant data and enabling dynamic visualisations.  
 
-The extensions were designed and added by the named authors under the supervision of of Dr Tomasz Kurowski between March and May 2025. 
+The extensions were designed and added by the named authors under the supervision of Dr Tomasz Kurowski between March and May 2025. 
 
 %This Technical Documentation describes the particular details of building upon the original TersectBrowser developed by Tomasz Kurowski into  TersectBrowser+. It outlines the integration of multiple extension features, providing the user with additional display and data analysis capabilities.
 
@@ -53,13 +53,29 @@ The \textit{Tersect Browser+} application is composed of four main components:
 \end{figure}
 
 
-The frontend is a browser-based interface developed in Angular and React, designed for interactive data visualization, including distance plots, accession selectors, and genome browser integration. The backend, built in Node.js and Express, provides API endpoints, data models, and utility scripts to serve genomic data and computation results from a MongoDB database. A set of common modules supports both frontend and backend logic with shared resources. Additionally, the architecture supports pluggable extensions, such as the genome-browser, which provide domain-specific capabilities like rendering gene models or enabling barcode-based comparisons. Supporting data files, environment configurations, and Python scripting for preprocessing or bioinformatics workflows are organized in separate folders for data loading and virtual environments, enabling efficient pipeline integration and deployment.
+The frontend is a browser-based interface developed in Angular JS designed for interactive data visualization, including distance plots, accession selectors. 
+
+ The backend, built in Node.js and Express, provides API endpoints, data models, and utility scripts to serve genomic data and computation results from a MongoDB database.
+
+ A set of common modules supports both frontend and backend logic with shared resources.  Additionally, the architecture supports pluggable extensions, such as the genome-browser which provide domain-specific capabilities like rendering gene models or enabling barcode-based comparisons. 
+
+ Supporting data files, environment configurations, and Python scripting for preprocessing or bioinformatics workflows are organized in separate folders for data loading and virtual environments, enabling efficient pipeline integration and deployment.  
+
+\subsection{Embedding The Extensions}
 
 %The TersectBrowser+ software is an Angular project, with an original frontend and backend written in Angular 8, and a separate extension space written in Angular 19 using Node 22. This `bolt-on' approach was chosen for the extensions in order to seamlessly integrate the new extensions with the original workspace within the project time constrainsts. Additionally, this approach allows the new extnesions to use up-to-date packages, resulting in enhanced functionality and a modern design. To run TersectBrowser+ on different platforms, the new extensions are hosted on NPM and can be linked as dependencies within the project.
 
 %Extensions added to TersectBrowser+ include the integration of a genome browser capable of displaying a variety of different tracks, notably variants and gene models, search functionality to identify and display regions containing high impact variants, and a tool to generate accession-specific barcodes. These extensions are hosted in a separate section of the project, but interact with both frontent and backend services to provide a seamless user experience.
 
-\textit{Tersect Browser+} is primarily built using Angular 8, preserving the architecture of the original application. To enable modern feature development without disrupting the existing codebase, a dedicated extension layer has been introduced using Angular 15 and Node.js 22. This modular, "bolt-on" extension framework allows for the seamless integration of new capabilities while taking advantage of the latest frontend and backend technologies. Extensions are developed independently and published to NPM, making them easily linkable through project dependencies. This hybrid approach ensures forward compatibility and scalability, while maintaining stability in the core application. Future versions of \textit{Tersect Browser+} may explore fully migrating the main application to a more unified and modern framework.
+\textit{Tersect Browser+} is originally built using Angular 8, to enable modern feature development without disrupting the existing codebase, a dedicated extension layer has been introduced using Angular 15 and Node.js 22.  
+
+New extensions are converted to web components and bundled with rollup [TODO: Reference] to a single min.js bundle, the target bundle is then transpiled to a version compatible with older browsers with babel [TODO: Reference]. The final output is deployed on NPM.
+
+The genome browser relies on \texttt{Jbrowse} [TODO: Reference] extensively. Since Jbrowse is written in \texttt{React} [TODO: Reference], it is embedded in the new angular app via the \texttt{ReactComponentDirective} provided by the \texttt{@ngeenx/ngx-react} package on NPM. 
+
+This modular,” bolt-on” extension framework allows for the seamless integration of new capabilities while taking advantage of the latest frontend technologies.
+
+Extensions are developed independently and published to NPM, making them easily linkable through project dependencies. This hybrid approach ensures forward compatibility and scalability, while maintaining stability in the core application. Future versions of Tersect Browser+ may explore fully migrating the main application to a more unified and modern framework.
 
 \section{Use Case}
 
@@ -71,7 +87,7 @@ The primary use cases considered were therefore the ability to:
     \item (1) open a genome browser within Tersect Browser and investigate specific variants;
     \item (2) see specific genes of interests against suspected introgressions; 
     \item (3) identify areas where high-impact variants are visible; 
-    \item (4) be able to genereate DNA barcodes for the varioius cultivars and species in the dataset; and,  
+    \item (4) be able to generate DNA barcodes for the various cultivars and species in the dataset; and,  
     \item (5) to be able to load additional datasets, including for other crops. 
 \end{itemize}
 
@@ -88,7 +104,7 @@ TersectBrowser+ can be setup and deployed from both Mac and Windows machines, wi
 The main requirements for TersectBrowser+ deployment are:
 \begin{itemize}
     \item nvm (versions 16 and 22 specifically, as these will be deployed separately)
-    \item npm registery \url{https://registry.npmjs.org/}
+    \item npm registry \url{https://registry.npmjs.org/}
     \item Angular CLI v1.7.1
     \item Tersect CLI
     \item JBrowse CLI
@@ -117,7 +133,7 @@ The Admin is defined as an individual with bioinformatics and software design kn
         \verb+python setup_new_tbrowser_dataset.py -f ${fasta} -g ${gff} -V ${vcfs}+
         \begin{itemize}
             \item After running the script, there should be visible a new \verb+config.json+ file in the root folder, as well as a new folder \verb+./~/mongo-data/gp_data_copy+ containing fasta files, gff files, and VCF files along with their index files. The main Tersect index file should be in the folder above. This is where the server will look to find information on tracks when generating the Variant Browser panel.
-            \item This script checks for the install of modules such as SAMtools, BCFtools, and HTSlib, and will attempt to download these if not found. If a multi-sample VCF file is provided, it will split this file into individual sample level VCFs before proceeding. It will make sure these files are unzipped before using TERSECT CLI to build a tersect index for the whole dataset (it sources a previously created .tersect virtual environment to run this). After recompressing and indexing the fasta and VCF files, it will edit the \verb+add_example_dataset.sh+ script to point to the correct index file, and begin dataset addition to TersectBrowser+. Lastly, it will add the GFF file as a gene models track accessible within the browser.
+            \item This script checks for the installation of modules such as SAMtools, BCFtools, and HTSlib, and will attempt to download these if not found. If a multi-sample VCF file is provided, it will split this file into individual sample level VCFs before proceeding. It will make sure these files are unzipped before using TERSECT CLI to build a tersect index for the whole dataset (it sources a previously created tersect virtual environment to run this). After recompressing and indexing the fasta and VCF files, it will edit the \verb+add_example_dataset.sh+ script to point to the correct index file, and begin dataset addition to TersectBrowser+. Lastly, it will add the GFF file as a gene models track accessible within the browser.
         \end{itemize}
 \end{enumerate}
 
@@ -128,7 +144,7 @@ The Admin is defined as an individual with bioinformatics and software design kn
     \item Change to the root of the Tersect-browser repo and run:\\
         \verb+nvm use 16+\\
         \verb+npm start+
-    \item Change to the ersect-browser/extension/genome-browser/ directory and run:\\
+    \item Change to the Tersect-browser/extension/genome-browser/ directory and run:\\
         \verb+nvm use 22+\\
         \verb+npm start+
     \item Open TersectBrowser+ on \url{http://localhost:4200/TersectBrowserGP/}
@@ -136,7 +152,7 @@ The Admin is defined as an individual with bioinformatics and software design kn
 
 \section{Functional Capabilities and Extensions}
 
-\textit{Tersect Browser+} comprises Tersect CLI, Tersect Browser and four extensions that meet the \textit{Teresect Browser+} use case in Section 3. These were: 
+\textit{Tersect Browser+} comprises Tersect CLI, Tersect Browser and four extensions that meet the \textit{Tersect Browser+} use case in Section 3. These were: 
 
 \begin{itemize}
     \item Genome Browser; 
@@ -152,7 +168,7 @@ The Admin is defined as an individual with bioinformatics and software design kn
 \subsubsection{Rationale}
 The main benefit of TersectBrowser relative to similar genome comparison software for displaying key differences within resequenced datasets is its use of Tersect CLI, to index and then quickly query these genomes for investigation at user-defined scale. To meet the user requirements and be competitive as a tool with other browsers, it was necessary to implement features that enable the visualised variant results to be annotated with genome information in the same browser. The main view of the original browser displayed the density of variants along each chromosome in comparison to the reference genome. To enhance this view, a variant browser with multiple tracks providing extra information at a per-base level was added. This enabled the user to directly correlate variant density with accession-specific variants. 
 
-On reviewing node-compatible browser tools such as CRAMER, JBrowse was selected as the prefered solution, due to its high customisability, up-to-date features and active technical support. The initial build of JBrowse into \textit{TersectBrowser+}, focused on retaining features most relevant to the user aims. This includeed bringing the styling of the panel in line with the rest of the browser page. The extension also involved generating a popup window of the same JBrowse component to be initialised when the user identified a specific accession or bin region of interest. 
+On reviewing node-compatible browser tools such as CRAMER, JBrowse was selected as the preferred solution, due to its high customisability, up-to-date features and active technical support. The initial build of JBrowse into \textit{TersectBrowser+}, focused on retaining features most relevant to the user aims. This included bringing the styling of the panel in line with the rest of the browser page. The extension also involved generating a popup window of the same JBrowse component to be initialised when the user identified a specific accession or bin region of interest. 
 
 \subsubsection{User Interface}
 \begin{figure}[h]
@@ -162,20 +178,14 @@ On reviewing node-compatible browser tools such as CRAMER, JBrowse was selected 
 \end{figure}
 
 \subsubsection{Main Window Location and Tracks}
-The main window is located at the top of Tersect Browser, below the settings bar but above the heatmap. Main window shows only sequence tracks and linear genome scale. Interactive features such as zoom anc chromosome selection have been removed from the main window. The container window has a dynamic offset, which changes according to tree view and zoom level to ensure the chromosome scales between TersectBrowser and JBrowse line up. By default, the main window shows only the gene models track. 
+The main window is located at the top of Tersect Browser, below the settings bar but above the heatmap. Interactive features such as zoom and chromosome selection have been removed from the main window. The container window has a dynamic offset, which changes according to tree view and zoom level to ensure the chromosome scales between TersectBrowser and JBrowse line up. By default, the main window shows only the gene models track. 
 
-The tracks include: 
-\begin{itemize}
-    \item Reference sequence 
-    \item Variant tracks for each loaded accession
-    \item Gene models FeatureTrack (\nameref{sec:Models})
-\end{itemize}
 
 \subsubsection{Popups and User Interaction}
 Popup window provides a more sandbox experience, providing more user interaction. The user can change zoom level and displayed chromosome, and two scale bars enable both precise and rapid navigation. The hamburger menu on the top left provides the capability for the user to upload their own data to visualise unique tracks.
 By default, the popup window shows the reference sequence track, gene models track, and variant track for the specified accession.
 
-\subsubsection{Jbrowser TersectBrowser Syncing}
+\subsubsection{Jbrowse TersectBrowser Syncing}
 
 Syncing of the JBrowse window and the TersectBrowser heatmap includes the following:
     \begin{itemize}
@@ -189,7 +199,7 @@ Syncing of the JBrowse window and the TersectBrowser heatmap includes the follow
 \subsubsection{Technical Components}
 
 \paragraph{View State} 
-The \verb +JBrowseLinearGenomeView+ component is imported from @jbrowse/react-linear-genome-view and is wrapped using React. The configurations for the assembly, assembly, and variant tracks, and tracks, are imported from the respective assembly.ts and tracks.ts configuration files. The styling configurations, config, are imported from jbrowseConfig.ts. The \verb +JbrowseWrapperProps+ are imported from \verb +JbrowseInterface+. 
+The \verb +JBrowseLinearGenomeView+ component is imported from \verb*|@jbrowse/react-linear-genome-view| and is wrapped using React. The configurations for the assembly, assembly, and variant tracks, and tracks, are imported from the respective assembly.ts and tracks.ts configuration files. The styling configurations, config, are imported from jbrowseConfig.ts. The \verb +JbrowseWrapperProps+ are imported from \verb +JbrowseInterface+. 
 
 The method \verb +JbrowserWrapper+ takes as the arguments the props from \verb +JbrowseWrapperProps+ and defines the \verb +viewState+. If an accession has been selected and the accession name is stored under \verb +props.location.accession.name+, the \verb +viewState+ defined in the \verb +JbrowseWithAccessionName+ is returned (See below parameters). If not, a conditional check verifies whether the props \verb +defaultInterval+ and \verb +offsetCanvas+ have been populated. If either of them are empty, a container with the phrase ``Loading…" is returned. If all data is present, the \verb +viewState+ is defined using the function \verb +createViewState+. This takes the following variables as arguments: 
 \begin{itemize}
@@ -270,21 +280,12 @@ For the popup window, the JBrowse \verb+viewState+ is configured when an accessi
 
 \subsubsection{Test Results}
 This extension has been tested with the additional Soybean dataset, with correct functionality. The relevance of the gene models in the GFF file depend on what the user provides in the dataset, and how the GFF file was created. 
-
-\subsubsection{Future Improvements}
-The gene models track could be expanded to display alternative splicing events, offering a clearer view of transcript diversity. Additionally, adding a hover-based popup over each bin that displays gene models for accessions containing variants could offer a rapid and informative view of variant differences.
-
+\clearpage
 \subsection{Feature Search Extension}
 \subsubsection{Rationale}
 The aim of this extension is to allow the user to search selected intervals and identify which accessions contain \hl{high/medium/low} impact variants within that region. The bins containing high impact variants for that gene will be highlighted at the accession level, allowing high resolution investigation of variants. The highlighted bins may then be selected and opened in the popup \nameref{sec:Browser} window for further investigation.
 
 \subsubsection{User Interface}
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=15cm, height=9cm]{FS1.png}
-    \caption{UI digram for Feature Search.}
-\end{figure}
-
 \paragraph{Feature Description}
 \begin{itemize}
     \item \verb+Open Variant Search+ button in TersectBrowser+ header, opens popup window for user to select advanced features.
@@ -292,48 +293,143 @@ The aim of this extension is to allow the user to search selected intervals and 
     \item Output: Bins in the canvas are highlighted red at the chromosomal position where the variant is located, and only for accessions containing variants of the specified impact.
     \item Clear button located in TersectBrowser+ header to clear highlighted bins from canvas and restore original heatmmap.
 \end{itemize}
-\subsubsection{Technical Description}
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=7cm, height=15cm]{FS2.png}
-    \caption{Data flow diagram for Feature Search.}
-\end{figure}
+\subsubsection{Technical Components}
 
-\paragraph{\hl{Search Bar}}
-\paragraph{\hl{Popup window with advanced settings }}
-\paragraph{Highlighting bins}
-Bin highlighting is controlled in the \verb+bin-draw.service+ by two functions. The first function, \verb+highlightFeatureBins()+, is defined, taking as arguments a string containing accession names, the bin position along the x-axis, and the \verb+binView+. First, the y-axis bin position for accession names is calculated. Then, the \verb+binView+ is redrawn in greyscale, with the bin colour determined by the difference to the reference accession. Using the x-axis \verb+binIndex+ position and the y-axis accession bin positions, these bins are coloured red in the \verb+binView+. The modified \verb+binView+ is returned as the output. The second function, \verb+highlightBins()+, takes as arguments the start position of the interval and the bin size currently shown in the Tersect pane, a list of ordered accessions shown in the canvas, and the searched accessions. For each searched accession, accession name is reformatted to match the format displayed in the Tersect pane. Then, the bin position along the x-axis is calculated using the \verb+getBinIndexFromPosition()+ function, which takes as arguments the feature position along the chromosome, the interval start position, and the bin size. Then, \verb+highlightFeatureBins()+ is called for each accession. Lastly, the canvas is redrawn using the modified \verb+binView+ output from \verb+highlightFeatureBins()+. 
+\subsubsection{Creating Search Indexes Per Chromosome}
+
+To enable searching for high impact variants across the dataset, distinct variant sites per chromosome region were obtained using \texttt{tersect}. The resulting VCF file was annotated with the merged VCF files from all accession samples in the dataset.
+
+
+The preparation process is automated with the \verb*|{build_annotate_per_chrom.sh}| script (Supplementary File 1). Its example usage is; 
+
+\begin{verbatim}
+    build_annotate_per_chrom.sh tracks.json index.tsi genes.gff3.gz [outdir]
+\end{verbatim}
+
+Where \texttt{tracks.json} is the JBrowse tracks configuration file (TODO: Reference), \texttt{index.tsi} is the Tersect index file, \texttt{genes.gff3.gz} is the compressed GFF3 gene annotation file, and \texttt{[outdir]} is the output directory for the generated per-chromosome VCF and annotation files.
+
+
+The final VCF was then compressed using \texttt{bgzip} and indexed with \texttt{tabix}. Additionally, Trix index files [TODO:reference] were generated for high impact variants on each chromosome to support rapid gene name search suggestions.
+
+
+The Trix file generation is automated with the \verb*|(tersect_trix_builder.sh)| script (Supplementary File 2).
+
+
+\subsubsection{Handling A Search Request}
+
+An API endpoint was added to the \texttt{tersect-router} file on the backend to support search functionality. The structure of the endpoint is as follows:
+
+\begin{verbatim}
+/query/:datasetId/variants/:chrom?start=number&end=number&filter=HIGH|MODERATE|LOW
+\end{verbatim}
+
+When searching by gene name, the Trix index files containing gene names associated with high impact variants are utilized.
+
+\subsubsection{Searching by Interval}
+
+The chromosome name is passed as a parameter to the search endpoint, while the start and end positions and the impact filter are passed as query parameters.
+
+The search functionality is powered by \texttt{bcftools}, which is executed using the \texttt{child\_process} module in \texttt{Node.js}. The matching variants are captured by parsing their identifiers in the format \texttt{CHROM:POS:REF:ALT}, and these are stored in a set to ensure uniqueness. 
+
+To associate variants with accession names, tersectForKey function uses \texttt{tersect} to determine which accessions have each specific variant. A function to get the optimal concurrency \texttt(getOptimalConcurrency) was introduced which detected the number of cores present on the server, subtracting 1 from the total and using the rest. To prevent server overload from concurrent \texttt{tersect} calls, the \texttt{p-limit} library is used to control concurrency based on available CPU cores.
+
+The positions are then collated to a map that links positions to a list of accession names. The results are then constructed by looping through each line and getting specific accession list from the map created via the position.
+
+The final result maps positions to accession name lists. These results are formatted and returned to the frontend in the following structure:
+
+        \begin{verbatim}
+        {
+        region,
+        filter,
+        count,
+        variants,
+        totalAccessions
+        }
+        \end{verbatim}
+
+The values are described below;
+
 \begin{itemize}
-    \item highlightFeatureBins(accessions: string[], binIndex: number, binView: DistanceBinView) - takes a string of accession names, a binIndex (corresponding to the bin position along the x-axis matching the gene position on the chromosome), and binView. The y-axis index for bins matching accession names in the accessions strings is calculated and combined with the binIndex to colour these specific bins red. The rest of the bins are coloured in greyscale, with saturation depending on binDistance (calculated from tersect on the backend 
-    \begin{itemize}
-        \item Bin-draw.service.ts 
-        \item Called by highlightBins() in bin-draw.service.ts 
-    \end{itemize}
-    \item highlightBins(intervalStart, binsize, orderedAccessions, searchedAccessions) - takes selected interval start position, selected binSize, list of ordered accessions shown in the canvas, and searched accessions (passed from callback function?). Accession names in Jbrowse are in a different format to what is stored in tersect browser, so accession names are reformatted to match tersect browser bins. binIndex is calculated for the selected gene. These two are passed to highlightFeatureBins() - along with this.bins - to highlight the bins. The canvas is then redrawn using the binView calculated in highlightFeatureBins(). 
-    \begin{itemize}
-        \item Bin-draw.service.ts 
-        \item Called by callHighlightBins() in tersect-browser.component.ts 
-    \end{itemize}
-    \item callHighlightBins(searchedAcessions) - takes searchedAccessions. Calls highlightBins(), passing along  selected interval start position, selected binSize, list of ordered accessions shown in the canvas, and searched accessions (passed from callback function?). 
-    \begin{itemize}
-        \item Tersect-browser.component.ts 
-    \end{itemize}
+    \item \textbf{region} - a string containing the region or interval on the selected chromosome (e.g., "chr1:100000-200000")
+    \item \textbf{filter} - a string specifying the variant impact filter applied (e.g., "HIGH", "MODERATE", or "LOW")
+    \item \textbf{count} - an integer representing the total number of variants found in the region with the specified filter
+    \item \textbf{variants} - an array of variant objects, each including chromosome, position, reference, alternate, effect, and accessions
+    \item \textbf{totalAccessions} - an integer specifying the total number of accessions in the dataset
 \end{itemize}
 
-\paragraph{Calling Highlighting Bins} \mbox{}
-\\
-\hl{TBC: Mechanism} of searching VCFs to identify variants 
+Each variant is formatted as:
 
-Finally, callHighlightBins() is called, which itself calls highlightBins() from the bin-draw.service, passing as arguments the current interval start position, binsize, displayed accessions in an ordered format, and the searched accessions.  
+        \begin{verbatim}
+        [
+        {
+            chr,
+            pos: { start: pos },
+            ref,
+            alt,
+            eff,
+            accessions
+        }
+        ]
+        \end{verbatim}
 
-\paragraph{\hl{Clear Button }}
-The clear button is located to the right of the \verb+Open variant search+ button and styled with \verb+fa fa-refresh+. It contains the event handler \verb+(click)="refreshBin()"+ that calls the \verb+refreshBin()+ method in \verb+BinDrawService+.
-This method calls \verb+generatePlotArray()+, which re-creates the bin view, and \verb+updateCanvas()+, which redraws the canvas using the re-created bin view.
- 
+The values are described below;
 
-\subsubsection{Test Results}
+\begin{itemize}
+    \item \textbf{chr} - a string specifying the chromosome name
+    \item \textbf{pos} - an object with a \texttt{start} field indicating the variant position
+    \item \textbf{ref} - a string specifying the reference allele
+    \item \textbf{alt} - a string specifying the alternate allele
+    \item \textbf{eff} - a string describing the effect or impact of the variant (e.g., "HIGH", "MODERATE", "LOW")
+    \item \textbf{accessions} - an array of accession names (strings) that contain this variant
+\end{itemize}
 
+\subsubsection{Searching by Gene Name}
+
+Gene-based searches use the pre-built Trix index files, which currently include only high impact variants.
+
+The Trix index is generated by exporting high impact variants per chromosome to a text file, using this identifier format:
+
+\begin{verbatim}
+docId = "${chrom}:${pos}:${ref}:${alt}|${sample}|${effBlock}"
+\end{verbatim}
+
+The index is built using \texttt{ixIxx}.
+
+\subsubsection{Linking with the Frontend}
+
+The gene search extension is developed in React to enable integration with future \texttt{JBrowse} sessions. Despite the main application being Angular (v19), React components are embedded using the \texttt{ReactComponentDirective} from the \texttt{@ngeenx/ngx-react} package.
+
+Two UI components support search configuration:
+\begin{itemize}
+  \item A range slider to select intervals.
+  \item An autocomplete input for gene ID search.
+\end{itemize}
+
+The React component handles the form submission, triggers the appropriate search via API or Trix, and returns results through a callback. Bin highlighting is then managed by the legacy tersect browser app.
+
+\subsubsection{Other Ways to Trigger Variant Search}
+
+Variant search can also be triggered from:
+\begin{itemize}
+  \item Each bin on the bin plot.
+  \item A selected range on the scale plot.
+\end{itemize}
+
+These triggers emit a custom event \texttt{tersect-search-variants}, which is being listened for on the react component. This sets the interval in the search dialog and opens the modal for user interaction.
+
+\subsubsection{Highlighting Bins}
+
+Bin highlighting is handled by two main functions in \texttt{bin-draw.service.ts}:
+
+\begin{itemize}
+  \item \texttt{highlightFeatureBins(accessions, binIndex, binView)}: Computes the y-axis position for each accession, redraws the bin view in greyscale, and highlights selected bins in red.
+  \item \texttt{highlightBins(intervalStart, binSize, orderedAccessions, searchedAccessions)}: Calculates the \texttt{binIndex} from position and bin size, and calls \texttt{highlightFeatureBins()}.
+\end{itemize}
+
+The top-level function \texttt{callHighlightBins(searchedAccessions)} is defined in \texttt{tersect-browser.component.ts}, where it retrieves interval, bin size, and accession info, and calls \texttt{highlightBins()}.
+
+\clearpage
 
 
 
