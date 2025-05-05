@@ -42,6 +42,16 @@ The initial view will show an error message, prompting the user to zoom in on de
 2b. Genome Browser popup window
 If the user is interested in a specific accession or a specific bin, they can click on the specific accession or bin, which will open a popup window displaying a `View in browser' button. Clicking on this button will open a large popup window that is detached from the background TersectBrowser+, allowing the user to change the view by zooming or scrolling in the popup window without changing the view in TersectBrowser+. If the user has opened the genome browser popup window from accession name, the window will be fully zoomed out and show the entire chromosome. If the user has opened the genome browser popup window from a specific bin, the window will be zoomed in to show that particular interval. 
 
+3. Feature Search
+The Feature Search functionality enables the user to search for specific variants (High/Moderate/Low) present within all accessions across a specified interval or within a specific gene. Clicking on the `Open Variant Search' button opens a popup window where the user can specify an interval to search, either by using the sliding bar or by manually typing in numbers, and can specify an impact level from the dropdown menu. Alternatively to searching by interval, the user can search by gene ID. The gene search bar has an autocomplete functionality and will suggest all possible gene IDs alphabetically. Searching by interval and gene ID are mutually exclusive, and when the user starts to type a gene ID the interval functionality becomes greyed out. To initiate the variant search, the user clicks on the `Search for variants' button, which highlights bins in the canvas representing the positions and accessions where variants of the specified impact level are present.
+
+Additionally, the user can select a specific bin or click and drag the chromosome scale bar to select an interval, which will bring up a popup menu with a `Search for variants' button. Clicking on this button will automatically open the `Variant Search' popup window with the interval preselected, and will automatically initiate the variant search. Again, bins in the heatmap will be highlighted red if they contain a variant of the specified impact level.
+
+4. Barcode generation
+
+
+5. Licensing and contact
+
 
 \subsection{Example 1:} A tomato genetics researcher wishes to identify differences between a domestic tomato genome and a large number of resequenced genomes of wild relatives. 
 
