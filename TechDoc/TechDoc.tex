@@ -16,8 +16,8 @@
 }
 
 
-
-\author{David Oluwasusi, Tanya Stead, Gregory Lupton, Gabrielle Baumberg \\ Supervised by: Dr. Tomasz Kurowski}
+% Have put them in alphabetical order
+\author{Gabrielle Baumberg, Gregory Lupton, David Oluwasusi, Tanya Stead \\ Supervised by: Dr. Tomasz Kurowski}
 
 \begin{document}
 \sloppy % allows line spacing stretch to justify the text
@@ -31,6 +31,18 @@ The original Tersect Browser offered a streamlined interface for investigating g
 
 Tersect Browser+ extends this foundation with several key enhancements aimed at cultivar biology. These include a genome browser, gene model visualizer, feature search tools, and barcode generation utilities—together offering a more powerful and versatile platform for crop genetics research.
 
+The requirements for the application extension were described in [reference Tom’s briefing on this from March]. For the biologist to be able to:  
+
+\begin{itemize}
+    \item open a genome browser within Tersect Browser and investigate specific variants.
+    \item see specific genes of interests against suspected introgressions. 
+    \item identify areas where high-impact variants are visible. 
+    \item be able to genereate DNA barcodes for the varioius cultivars and species in the dataset. 
+    \item to be able to load additional datasets, including for other crops. 
+\end{itemize}
+
+The extensions were designed and added by the named authors under the supervision of of Dr Tomasz Kurowski between March and May 2025. 
+
 %This Technical Documentation describes the particular details of building upon the original TersectBrowser developed by Tomasz Kurowski into  TersectBrowser+. It outlines the integration of multiple extension features, providing the user with additional display and data analysis capabilities.
 
 \section{Architecture}
@@ -42,6 +54,8 @@ The \textit{Tersect Browser+} application is composed of four main components:
     \item extension modules.
 \end{itemize} 
 
+[Insert figure in here]
+
 The frontend is a browser-based interface developed in Angular and React, designed for interactive data visualization, including distance plots, accession selectors, and genome browser integration. The backend, built in Node.js and Express, provides API endpoints, data models, and utility scripts to serve genomic data and computation results from a MongoDB database. A set of common modules supports both frontend and backend logic with shared resources. Additionally, the architecture supports pluggable extensions, such as the genome-browser, which provide domain-specific capabilities like rendering gene models or enabling barcode-based comparisons. Supporting data files, environment configurations, and Python scripting for preprocessing or bioinformatics workflows are organized in separate folders for data loading and virtual environments, enabling efficient pipeline integration and deployment.
 
 %The TersectBrowser+ software is an Angular project, with an original frontend and backend written in Angular 8, and a separate extension space written in Angular 19 using Node 22. This `bolt-on' approach was chosen for the extensions in order to seamlessly integrate the new extensions with the original workspace within the project time constrainsts. Additionally, this approach allows the new extnesions to use up-to-date packages, resulting in enhanced functionality and a modern design. To run TersectBrowser+ on different platforms, the new extensions are hosted on NPM and can be linked as dependencies within the project.
@@ -51,7 +65,9 @@ The frontend is a browser-based interface developed in Angular and React, design
 \textit{Tersect Browser+} is primarily built using Angular 8, preserving the architecture of the original application. To enable modern feature development without disrupting the existing codebase, a dedicated extension layer has been introduced using Angular 15 and Node.js 22. This modular, "bolt-on" extension framework allows for the seamless integration of new capabilities while taking advantage of the latest frontend and backend technologies. Extensions are developed independently and published to NPM, making them easily linkable through project dependencies. This hybrid approach ensures forward compatibility and scalability, while maintaining stability in the core application. Future versions of \textit{Tersect Browser+} may explore fully migrating the main application to a more unified and modern framework.
 
 \section{Deployment}
-The GitHub project \url{https://github.com/Tersect-Browser/Tersect-browser} README provides detailed instructions for setup, dependencies, and deployment. Here, we expand upon these instructions and give a detailed overview of the structure of each extension.
+The GitHub project \url{https://github.com/Tersect-Browser/Tersect-browser} README provides detailed instructions for setup, dependencies, and deployment. This section provides additional information. 
+
+%Here, we expand upon these instructions and give a detailed overview of the structure of each extension.
 
 \subsection{System Requirements}
 TersectBrowser+ can be setup and deployed from both Mac and Windows machines, with variations in the configuration required. 
