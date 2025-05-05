@@ -28,6 +28,32 @@
 TersectBrowser+ is designed to be useful to a range of Users. Hosting features within the same browser allows the conducting of full analyses within the same page, benefitting both a more experienced researcher as well as a novice to the field. 
 
 \section{Use Cases - Video transcript}
+1a. TB Homepage & main page
+On opening of TersectBrowser+, we are met with the introductory page displaying the loaded datasets. The user can click on one of the available datasets, which will bring them to the main TersectBrowser+ exploratory page. The main body of the page is composed of a heatmap, comparing all accessions within the dataset against the selected reference accession. Darker bins represent areas with greater variation between the accession and the reference, whilst lighter bins represent more similar sequences. Vertical red bars signify gaps in the reference genome. Above the heatmap is a scale bar indicating chromosome position. 
+
+1b. TB Main page header and buttons
+The menu bar above the heatmap contains navigational controls. Newly added in the TersectBrowser+ release is the `binoculars' button, the `Open Variant Search' button, and the `refresh' button.
+
+2a. Genome browser main window
+To view gene models corresponding to chromosome position, the user can click on the `binoculars' button, which will open the genome browser panel above the heatmap, showing gene models for the corresponding chromosomal positions. The panel has a left-margin offset to ensure the chromosomal scale bar between the genome browser panel and heatmap are aligned. In this view, the genome browser panel and heatmap are fully synced, such that any changes made to the horizontal scroll along the x-axis, zoom level,bin size, selected interval, or selected chromosome, will be immediately reflected in both the heatmap and genome browser panel. 
+
+The initial view will show an error message, prompting the user to zoom in on decrease the bin size, as the default view of TersectBrowser+ is too zoomed out. The genome browser panel has a set height that can be changed by clicking and dragging the bottom of the panel. The user can also scroll vertically along the y-axis to view all gene models without changing the view of the TersectBrowser+ heatmap. 
+
+2b. Genome Browser popup window
+If the user is interested in a specific accession or a specific bin, they can click on the specific accession or bin, which will open a popup window displaying a `View in browser' button. Clicking on this button will open a large popup window that is detached from the background TersectBrowser+, allowing the user to change the view by zooming or scrolling in the popup window without changing the view in TersectBrowser+. If the user has opened the genome browser popup window from accession name, the window will be fully zoomed out and show the entire chromosome. If the user has opened the genome browser popup window from a specific bin, the window will be zoomed in to show that particular interval. 
+
+3. Feature Search
+The Feature Search functionality enables the user to search for specific variants (High/Moderate/Low) present within all accessions across a specified interval or within a specific gene. Clicking on the `Open Variant Search' button opens a popup window where the user can specify an interval to search, either by using the sliding bar or by manually typing in numbers, and can specify an impact level from the dropdown menu. Alternatively to searching by interval, the user can search by gene ID. The gene search bar has an autocomplete functionality and will suggest all possible gene IDs alphabetically. Searching by interval and gene ID are mutually exclusive, and when the user starts to type a gene ID the interval functionality becomes greyed out. To initiate the variant search, the user clicks on the `Search for variants' button, which highlights bins in the canvas representing the positions and accessions where variants of the specified impact level are present.
+
+Additionally, the user can select a specific bin or click and drag the chromosome scale bar to select an interval, which will bring up a popup menu with a `Search for variants' button. Clicking on this button will automatically open the `Variant Search' popup window with the interval preselected, and will automatically initiate the variant search. Again, bins in the heatmap will be highlighted red if they contain a variant of the specified impact level.
+
+4. Barcode generation
+Once the user has identified an accession and a bin of interest, TersectBrowser+ offers the capability to generate accession-specific barcodes for that interval. Clicking on a specific bin opens a popup menu with a `Create barcode' button. Clicking this button opens a larger Barcode Generator popup window, where the user can specify barcode size and the maximum number of variants per barcode, which are populated with the default values on 150 and 1 respectively. Clicking on the `Generate' button will create the barcodes, and a `Download' button will appear. Clicking the `Download' button automatically downloads a .tsv file containing the generated barcodes and their associated statistics.
+
+5. Loading datasets
+
+6. Licensing and contact
+TersectBrowser+ is an application developed by Cranfield University. It is developed under the MIT license and incorporates components from JBrowse, which is released under the Apache License 2.0. The source code is freely available at [Github link]. The accompanying README contains additional information to setup and run TersectBrowser+. For future correspondance please contact Dr Tom Kurowski at: t.j.kurowski@cranfield.ac.uk.
 
 \subsection{Example 1:} A tomato genetics researcher wishes to identify differences between a domestic tomato genome and a large number of resequenced genomes of wild relatives. 
 
