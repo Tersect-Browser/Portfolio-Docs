@@ -104,6 +104,11 @@ The main benefit of TersectBrowser relative to similar genome comparison softwar
 After a review of node-compatible browser tools such as CRAMER, JBrowse was ultimately chosen to carry out this extension request, due to its high customisability, up-to-date features, and active technical support. The initial build of JBrowse into TersectBrowser+ as an extension focused on retaining features most relevant to the user aims, and bringing the styling of the panel in line with the rest of the page. This extension also involved generating a popup window of the same JBrowse component to be initialised when the user was interested in a specific accession or bin region. 
 
 \subsubsection{User Interface}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=10cm, height=8cm]{GenomeBrowser.png}
+    \caption{UI diagram for Genome Browser.}
+\end{figure}
 
 \paragraph{Feature Description}
 \begin{itemize}
@@ -128,6 +133,7 @@ After a review of node-compatible browser tools such as CRAMER, JBrowse was ulti
         \item Chromosome.
         \item Horizontal scrolling along the x-axis.
     \end{itemize}
+\end{itemize}
 \end{itemize}
     
 \subsubsection{Technical Description}
@@ -225,6 +231,12 @@ This extension has been tested with the additional Soybean dataset, with correct
 The aim of this extension is to allow the user to search selected intervals and identify which accessions contain \hl{high/medium/low} impact variants within that region. The bins containing high impact variants for that gene will be highlighted at the accession level, allowing high resolution investigation of variants. The highlighted bins may then be selected and opened in the popup \nameref{sec:Browser} window for further investigation.
 
 \subsubsection{User Interface}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=15cm, height=9cm]{FS1.png}
+    \caption{UI digram for Feature Search.}
+\end{figure}
+
 \paragraph{Feature Description}
 \begin{itemize}
     \item \verb+Open Variant Search+ button in TersectBrowser+ header, opens popup window for user to select advanced features.
@@ -233,6 +245,13 @@ The aim of this extension is to allow the user to search selected intervals and 
     \item Clear button located in TersectBrowser+ header to clear highlighted bins from canvas and restore original heatmmap.
 \end{itemize}
 \subsubsection{Technical Description}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=7cm, height=15cm]{FS2.png}
+    \caption{Data flow diagram for Feature Search.}
+\end{figure}
+
 \paragraph{\hl{Search Bar}}
 \paragraph{\hl{Popup window with advanced settings }}
 \paragraph{Highlighting bins}
@@ -278,9 +297,11 @@ A key aim for plant breeders when comparing their own plant strains with other c
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=5cm, height=9cm]{UserBarcode.jpg}
-    \caption{User-focused data flow through Barcoding Extension.}
+    \includegraphics[width=6cm, height=8cm]{Bar1.png}
+    \caption{UI diagram for Barcode Generation.}
 \end{figure}
+
+
 \paragraph{Frontend Display Feature Description}
 When the user clicks on a bin, the popup menu appears and the button "Create barcode" is visible, styled with a barcode icon. When the user clicks on this button, a popup window appears in the centre of the screen. The window title is the corresponding accession name. The window contains the header "Barcode Generator" and contains a description of what is being generated. There is a box for the user to input barcode size, with default set to 150, and the maximum number of variants allowed per barcode (this is an optional parameter. Leaving this blank means all possible barcodes will be returned).  
 
@@ -305,11 +326,10 @@ The file contains the following information:
 
 \subsubsection{Technical Description}
 
-
 \begin{figure}[h]
     \centering
-    \includegraphics[width=7cm, height=12cm]{ExtBarcode.jpg}
-    \caption{User-focused data flow through Barcoding Extension.}
+    \includegraphics[width=7cm, height=15cm]{Bar2.png}
+    \caption{Data flow diagram for Barcode Generation.}
 \end{figure}
 
 Barcode generation is controlled by two scripts: \verb+barcode_finder.sh+ and \verb+find_barcode.py+. 
