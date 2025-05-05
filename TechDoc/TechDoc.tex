@@ -104,9 +104,9 @@ The Admin is defined as an individual with bioinformatics and software design kn
     \item Collect background context and required data from the user.
 \begin{itemize}
     \item Reference genome in fasta format (may be compressed). Size and chromosome number will impact the speed of dataset upload and deployment - TersectBrowser+ has been tested with a genome size of ~1GB, and 20 chromosome pairs.
-    \item Resequenced genome dataset in VCF format (may be compressed, as a multi-sample VCF or as a directory of individual files). TersectBrowser+ has been tested with a dataset size of ~500 VCF files representing individual accessions. 
+    \item Resequenced genome dataset in VCF format (may be compressed, as a multi-sample VCF or as a directory of individual files). TersectBrowser+ has been tested with a dataset size of ~500 VCF files representing individual accessions. VCF files should be produced using SNPeff software. If not using SNPeff, ensure that variant impact levels are categorised into `High', `Moderate', and `Low' impact. If not provided, the gene model track in the Variant Browser will be unavailable. 
     \item Any metadata associated with different accessions in the dataset, such as wild variety vs domesticated variety. \hl{This should be provided in a text file.}
-    \item A GFF file of gene model information for the reference genome, produced using SNPeff software. If not using SNPeff, ensure that variant impact levels are categorised into `High', `Medium', and `Low' impact. If not provided, the gene model track in the Variant Browser will be unavailable. 
+    \item A GFF file of gene model information for the reference genome. 
     \item Whether there are prior identified introgressions known to be functionally relevant for the species. These can be used to `check' the ability of TersectBrowser+ to identify introgressed regions for the specified dataset.
 \end{itemize}
     \item Clone the GitHub repository of  \textit{TersectBrowser+} to the local machine. Follow the README from \hyperlink {https://github.com/Tersect-Browser/Tersect-browser.git}{TersectBrowser+ GitHub} for installation instructions.
@@ -222,12 +222,10 @@ The zoom is synchronized between Tersect Browser and the JBrowse component. The 
 The bin size is synchronised in the same way: the \verb +binsize+ observable is a component of the \verb +PlotStateService+ class. Inside \verb +tersect-browser.component.ts+, the subscription \verb +binSizeSub+ listens to the \verb +binsize+ observable and assigns the latest value to the component \verb +binSize+. Inside \verb +tersect-browser.component.html+, the \verb +binSize+ is passed to \verb +JbrowseWrapper+ as a prop. 
 Together, \verb +bpPerPx+ is calculated with the following equation: \begin{equation} bpPerPx = ((props.location.binSize) * (100 /props.location.zoomLevel)) \end{equation}
 
-
 \paragraph{Chromosome selection}
 The displayed chromosome is synced in a similar fashion to the zoom and bin size. The \verb +chromosome+ observable is a component of the \verb +PlotStateService+ class. Inside \verb +tersect-browser.component.ts+, the subscription \verb +chromosomeSub+ listens to the \verb +chromosome+ observable and assigns the latest value to the object \verb +selectedChromosomeSub+. Inside \verb +tersect-browser.component.html+, the \verb +selectedChromosomeSub+ is passed to \verb +JbrowseWrapper+ as the prop chromosome. Inside \verb +JbrowseWrapper+, the chromosome name is called from the chromosome object and used to define the \verb +refName+ in the \verb +viewState+. 
 
 Additionally, the default chromosome that is pre-selected when Tersect Browser initially loads is passed to \verb +JbrowseWrapper+ and used to define the default \verb +viewState+. Inside \verb +tersect-browser.component.ts+, the variable \verb +preselectedChromosome+ is defined. On initializing, when the \verb +settings+ observer subscribes to the \verb +tersectBackendService+, the current \verb +plotState.chromosome+ is saved to the \verb +preselectedChromosome+ variable. This is then passed as the prop \verb +preselectedChromosome+ to \verb +JBrowseWrapper+ inside \verb +tersect-browser.component.html+.  Inside \verb +JbrowseWrapper+, the chromosome name is called from the \verb +preselectedChromosome+ object and used to define the \verb +refName+ in the default \verb +viewState+. 
-
 
 \paragraph{Interval display}
 The displayed interval is synced in a similar fashion to the zoom, bin size, and chromosome selection. The \verb +interval+ observable is a component of the \verb +PlotStateService+ class. Inside \verb +tersect-browser.component.ts+, the subscription \verb +selectedIntervalSub+ listens to the \verb +interval+ observable and assigns the latest value to the array \verb +selectedInterval+. Inside \verb +tersect-browser.component.html+, the \verb +selectedInterval+ is passed to \verb +JbrowseWrapper+ as the prop \verb +selectedInterval+. Inside \verb +JbrowseWrapper+, the first element of the array is used to define the start position in the \verb +viewState+, and the second element is used to define the end position. 
@@ -246,6 +244,9 @@ Horizontal scroll inputs from the user are disabled inside the main JBrowse wind
 When additional variant tracks are added to the Browser view, the size of the browser panel does not change. The user is, however, able to scroll downwards to view more tracks in the browser. 
 
 When a new dataset is added, the custom additional script automatically updates the names of tracks and assembly in the relevant files within the genome-browser extension. This flexibility allows the Genome Browser extension to be accessible by plant breeders working on many different datasets. TersectBrowser was initially validated with a human genome dataset, so it was important to maintain this flexibility of input in the new extensions.
+
+\subsection{Future Improvements}
+Currently, the genome browser popup window is limited to opening a single window within the TersectBrowser+ webpage. A button to open the popup window in a new tab could be added, which would allow the user to open multiple detatched popup windows and view them simultaneously.
 
 
 \subsection{Gene Models Extension}
@@ -269,6 +270,9 @@ For the popup window, the JBrowse \verb+viewState+ is configured when an accessi
 
 \subsubsection{Test Results}
 This extension has been tested with the additional Soybean dataset, with correct functionality. The relevance of the gene models in the GFF file depend on what the user provides in the dataset, and how the GFF file was created. 
+
+\subsubsection{Future Improvements}
+The gene models track could be expanded to display alternative splicing events, offering a clearer view of transcript diversity. Additionally, adding a hover-based popup over each bin that displays gene models for accessions containing variants could offer a rapid and informative view of variant differences.
 
 \subsection{Feature Search Extension}
 \subsubsection{Rationale}
@@ -322,6 +326,7 @@ Bin highlighting is controlled in the \verb+bin-draw.service+ by two functions. 
 \hl{TBC: Mechanism} of searching VCFs to identify variants 
 
 Finally, callHighlightBins() is called, which itself calls highlightBins() from the bin-draw.service, passing as arguments the current interval start position, binsize, displayed accessions in an ordered format, and the searched accessions.  
+
 \paragraph{\hl{Clear Button }}
 The clear button is located to the right of the \verb+Open variant search+ button and styled with \verb+fa fa-refresh+. It contains the event handler \verb+(click)="refreshBin()"+ that calls the \verb+refreshBin()+ method in \verb+BinDrawService+.
 This method calls \verb+generatePlotArray()+, which re-creates the bin view, and \verb+updateCanvas()+, which redraws the canvas using the re-created bin view.
